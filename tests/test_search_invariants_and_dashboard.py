@@ -122,10 +122,12 @@ class TestUniquenessInvariants:
             assert _evaluate(inv)
 
     def test_dup_caught(self):
-        invs = uniqueness_invariants([
-            {"id": "a", "title": "X"},
-            {"id": "a", "title": "Y"},
-        ])
+        invs = uniqueness_invariants(
+            [
+                {"id": "a", "title": "X"},
+                {"id": "a", "title": "Y"},
+            ]
+        )
         assert invs[0].actual == 1.0
 
 
@@ -159,17 +161,13 @@ class TestYearInvariants:
 
 class TestKeywordInvariants:
     def test_real_aggregate_passes(self, aggregate, aggregate_min_per_keyword):
-        for inv in keyword_invariants(
-            aggregate, min_per_keyword=aggregate_min_per_keyword
-        ):
+        for inv in keyword_invariants(aggregate, min_per_keyword=aggregate_min_per_keyword):
             assert _evaluate(inv), inv.description
 
 
 class TestAllInvariants:
     def test_real_corpus_all_pass(self, papers, aggregate, aggregate_min_per_keyword):
-        invs = all_invariants(
-            papers, aggregate=aggregate, min_per_keyword=aggregate_min_per_keyword
-        )
+        invs = all_invariants(papers, aggregate=aggregate, min_per_keyword=aggregate_min_per_keyword)
         # n_pass == n_total > some floor
         assert len(invs) >= 9
         for inv in invs:
@@ -189,13 +187,20 @@ class TestBuildDashboardCLI:
             [
                 sys.executable,
                 str(PROJECT_ROOT / "scripts" / "zzz_build_dashboard.py"),
-                "--corpus", str(runtime_corpus),
-                "--html-out", str(html),
-                "--json-out", str(js),
-                "--invariants-out", str(tmp_path / "i.txt"),
-                "--summary-out", str(tmp_path / "s.txt"),
+                "--corpus",
+                str(runtime_corpus),
+                "--html-out",
+                str(html),
+                "--json-out",
+                str(js),
+                "--invariants-out",
+                str(tmp_path / "i.txt"),
+                "--summary-out",
+                str(tmp_path / "s.txt"),
             ],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         assert result.returncode == 0, result.stderr
         bundle = json.loads(js.read_text())
@@ -208,16 +213,26 @@ class TestBuildDashboardCLI:
             [
                 sys.executable,
                 str(PROJECT_ROOT / "scripts" / "zzz_build_dashboard.py"),
-                "--corpus", str(runtime_corpus),
-                "--doi-floor", "0.99",
-                "--abstract-floor", "0.99",
-                "--year-floor", "0.99",
-                "--html-out", str(tmp_path / "d.html"),
-                "--json-out", str(tmp_path / "d.json"),
-                "--invariants-out", str(tmp_path / "i.txt"),
-                "--summary-out", str(tmp_path / "s.txt"),
+                "--corpus",
+                str(runtime_corpus),
+                "--doi-floor",
+                "0.99",
+                "--abstract-floor",
+                "0.99",
+                "--year-floor",
+                "0.99",
+                "--html-out",
+                str(tmp_path / "d.html"),
+                "--json-out",
+                str(tmp_path / "d.json"),
+                "--invariants-out",
+                str(tmp_path / "i.txt"),
+                "--summary-out",
+                str(tmp_path / "s.txt"),
             ],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         # The corpus has 100% abstract / year coverage but only 66% DOI,
         # so the strict floor must catch the doi_coverage invariant.
@@ -230,15 +245,24 @@ class TestBuildDashboardCLI:
             [
                 sys.executable,
                 str(PROJECT_ROOT / "scripts" / "zzz_build_dashboard.py"),
-                "--corpus", str(runtime_corpus),
-                "--year-min", "2010",
-                "--year-max", "2020",
-                "--html-out", str(tmp_path / "d.html"),
-                "--json-out", str(js),
-                "--invariants-out", str(tmp_path / "i.txt"),
-                "--summary-out", str(tmp_path / "s.txt"),
+                "--corpus",
+                str(runtime_corpus),
+                "--year-min",
+                "2010",
+                "--year-max",
+                "2020",
+                "--html-out",
+                str(tmp_path / "d.html"),
+                "--json-out",
+                str(js),
+                "--invariants-out",
+                str(tmp_path / "i.txt"),
+                "--summary-out",
+                str(tmp_path / "s.txt"),
             ],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         assert result.returncode == 0, result.stderr
         bundle = json.loads(js.read_text())
@@ -250,10 +274,15 @@ class TestBuildDashboardCLI:
             [
                 sys.executable,
                 str(PROJECT_ROOT / "scripts" / "zzz_build_dashboard.py"),
-                "--year-min", "2020",
-                "--year-max", "2000",
-                "--html-out", str(tmp_path / "x.html"),
+                "--year-min",
+                "2020",
+                "--year-max",
+                "2000",
+                "--html-out",
+                str(tmp_path / "x.html"),
             ],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode != 0

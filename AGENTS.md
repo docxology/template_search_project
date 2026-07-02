@@ -5,8 +5,10 @@
 Exemplar project demonstrating end-to-end use of the
 `infrastructure/search/`, `infrastructure/reference/`, and
 `infrastructure/llm/` modules. Mirrors the structure of
-`projects/template_code_project/` so the pipeline runner discovers and executes
-both projects with the same code.
+`projects/templates/template_code_project/` so the pipeline runner discovers
+and executes both projects with the same code.
+
+Decision memory and verifier hardening follow [`docs/rules/memory_and_decision_records.md`](../../../docs/rules/memory_and_decision_records.md): use nearby `WHY:` comments only for surprising local choices, keep volatile counts generated, and add negative controls for verifier-like gates.
 
 Subfolder documentation: [`docs/AGENTS.md`](docs/AGENTS.md), [`manuscript/AGENTS.md`](manuscript/AGENTS.md), [`src/AGENTS.md`](src/AGENTS.md), [`tests/AGENTS.md`](tests/AGENTS.md), [`scripts/AGENTS.md`](scripts/AGENTS.md) (each with a [`README.md`](README.md) in the same directory).
 
@@ -14,7 +16,7 @@ Subfolder documentation: [`docs/AGENTS.md`](docs/AGENTS.md), [`manuscript/AGENTS
 
 ```mermaid
 flowchart TB
-    ROOT[/projects/template_search_project/]
+    ROOT[/projects/templates/template_search_project/]
     ROOT --> SRC_DIR[/src<br/>domain logic/]
     ROOT --> TESTS_DIR[/tests<br/>real-data tests/]
     ROOT --> SCR_DIR[/scripts<br/>thin orchestrators/]
@@ -115,7 +117,7 @@ See [`src/deep_search.py`](src/deep_search.py) and
 ## Testing
 
 ```bash
-uv run pytest projects/template_search_project/tests/ -v
+uv run pytest projects/templates/template_search_project/tests/ -v
 ```
 
 All tests run offline: `LocalBackend` against real temp files,
@@ -159,14 +161,14 @@ Configurable gate via [`scripts/review`](scripts/review) and [`review_config.yam
 List stages:
 
 ```bash
-cd projects/template_search_project && uv run python scripts/review --list
+cd projects/templates/template_search_project && uv run python scripts/review --list
 ```
 
 Run all enabled stages (from repo root):
 
 ```bash
-uv run python projects/template_search_project/scripts/review \
-  --project-root "$(pwd)/projects/template_search_project"
+uv run python projects/templates/template_search_project/scripts/review \
+  --project-root "$(pwd)/projects/templates/template_search_project"
 ```
 
 ### Available stages
@@ -193,7 +195,6 @@ Add `stage_type: custom` and wire the subprocess in `scripts/review` to `src.ana
 
 * [`README.md`](README.md) — quick reference.
 * [`docs/README.md`](docs/README.md) — project docs index.
-* [`docs/modules/literature-search-and-references.md`](../../docs/modules/literature-search-and-references.md) — module overview.
-* [`docs/guides/literature-workflow-guide.md`](../../docs/guides/literature-workflow-guide.md) — narrative tutorial.
-* [`infrastructure/search/AGENTS.md`](../../infrastructure/search/AGENTS.md) and [`infrastructure/reference/AGENTS.md`](../../infrastructure/reference/AGENTS.md) — infrastructure guides.
-
+* [`docs/modules/literature-search-and-references.md`](../../../docs/modules/literature-search-and-references.md) — module overview.
+* [`docs/guides/literature-workflow-guide.md`](../../../docs/guides/literature-workflow-guide.md) — narrative tutorial.
+* [`infrastructure/search/AGENTS.md`](../../../infrastructure/search/AGENTS.md) and [`infrastructure/reference/AGENTS.md`](../../../infrastructure/reference/AGENTS.md) — infrastructure guides.

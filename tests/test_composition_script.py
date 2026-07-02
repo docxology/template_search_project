@@ -9,7 +9,8 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-REPO_ROOT = PROJECT_ROOT.parent.parent
+# Project lives at projects/templates/<name>/; repo root is three levels up.
+REPO_ROOT = PROJECT_ROOT.parents[2]
 
 
 def _run(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -58,9 +59,7 @@ def _setup_iso_with_deep_search(tmp_path: Path) -> Path:
         ],
         "citation_keys": {"doi:10.1/x": "alice2020convexity"},
     }
-    (deep / "aggregate.json").write_text(
-        json.dumps(aggregate), encoding="utf-8"
-    )
+    (deep / "aggregate.json").write_text(json.dumps(aggregate), encoding="utf-8")
     (deep / "convex" / "papers.json").write_text(
         json.dumps(
             {
@@ -98,9 +97,7 @@ def test_composition_skips_when_no_deep_search(tmp_path: Path):
     iso = tmp_path / "empty"
     iso.mkdir()
     (iso / "manuscript").mkdir()
-    (iso / "manuscript" / "config.yaml").write_text(
-        "paper:\n  title: 'X'\nsearch:\n  query: 'x'\n", encoding="utf-8"
-    )
+    (iso / "manuscript" / "config.yaml").write_text("paper:\n  title: 'X'\nsearch:\n  query: 'x'\n", encoding="utf-8")
     result = _run(
         [
             "--config",
@@ -146,9 +143,7 @@ def test_composition_writes_section_with_all_keys(tmp_path: Path):
 def test_composition_flags_missing_keys(tmp_path: Path):
     iso = _setup_iso_with_deep_search(tmp_path)
     # Empty the bib so every cited key is missing.
-    (iso / "manuscript" / "references_deep.bib").write_text(
-        "% empty bib\n", encoding="utf-8"
-    )
+    (iso / "manuscript" / "references_deep.bib").write_text("% empty bib\n", encoding="utf-8")
     result = _run(
         [
             "--config",
@@ -158,11 +153,7 @@ def test_composition_flags_missing_keys(tmp_path: Path):
         ]
     )
     assert result.returncode == 0, result.stderr
-    summary = json.loads(
-        (iso / "output" / "deep_search" / "composition_summary.json").read_text(
-            encoding="utf-8"
-        )
-    )
+    summary = json.loads((iso / "output" / "deep_search" / "composition_summary.json").read_text(encoding="utf-8"))
     assert "alice2020convexity" in summary["missing_citation_keys"]
 
 

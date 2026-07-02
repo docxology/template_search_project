@@ -103,9 +103,7 @@ class TestSynthesisCalls:
     def test_custom_template_used(self):
         paper = Paper(id="x", title="T")
         custom = "MY TEMPLATE {citation_key}\n{paper_block}"
-        result = synthesise_per_paper(
-            paper, "k", llm=_llm_echo, prompt_template=custom
-        )
+        result = synthesise_per_paper(paper, "k", llm=_llm_echo, prompt_template=custom)
         assert result.prompt.startswith("MY TEMPLATE k\n")
 
 

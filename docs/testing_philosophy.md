@@ -48,10 +48,10 @@ Tests pass a deterministic local function. Runtime callers pass the adapter buil
 | `tests/test_search_invariants_and_dashboard.py` | `src/search_invariants.py` + dashboard payloads |
 | `tests/test_readme_config_consistency.py` | Project README claims match live `manuscript/config.yaml` |
 
-Configuration: `projects/template_search_project/pyproject.toml` (`fail_under = 90`).
-Conftest: `projects/template_search_project/tests/conftest.py` (sets `MPLBACKEND=Agg`, adds `src/` to `sys.path`).
+Configuration: `projects/templates/template_search_project/pyproject.toml` (`fail_under = 90`).
+Conftest: `projects/templates/template_search_project/tests/conftest.py` (sets `MPLBACKEND=Agg`, adds `src/` to `sys.path`).
 
-The suite currently collects **266 tests** (265 passed, 1 skipped). Line coverage on `src/` typically lands at **~99.50%**, well above the 90% gate.
+Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md); the suite runs well above the 90% gate.
 
 ## Three Pillars
 
@@ -90,8 +90,8 @@ exclude_lines = [
 Run with full coverage report:
 
 ```bash
-uv run pytest projects/template_search_project/tests/ \
-    --cov=projects/template_search_project/src \
+uv run pytest projects/templates/template_search_project/tests/ \
+    --cov=projects/templates/template_search_project/src \
     --cov-report=term-missing \
     --cov-fail-under=90
 ```

@@ -116,6 +116,7 @@ class TestBuildBackends:
 
         class _Fake(SearchBackend):
             name = "fake"
+
             def search(self, query):
                 return []
 
@@ -142,9 +143,7 @@ class TestRunLiteraturePipeline:
     def test_search_cache_created(self, tmp_path: Path):
         corpus = _write_corpus(tmp_path)
         config = _make_config("research", ["local"])
-        artifacts = run_literature_pipeline(
-            config, project_root=tmp_path, corpus_path=corpus
-        )
+        artifacts = run_literature_pipeline(config, project_root=tmp_path, corpus_path=corpus)
         assert artifacts.cache_dir is not None
         cache_files = list(artifacts.cache_dir.glob("search_*.json"))
         assert len(cache_files) == 1
@@ -170,15 +169,11 @@ class TestRunLiteraturePipeline:
         live in ``output/search/cache/search_*.json``, not the bib."""
         corpus = _write_corpus(tmp_path)
         config = _make_config("research", ["local"])
-        first = run_literature_pipeline(
-            config, project_root=tmp_path, corpus_path=corpus
-        )
+        first = run_literature_pipeline(config, project_root=tmp_path, corpus_path=corpus)
         first_bib = first.bibtex_path.read_bytes()
         first_corpus = first.corpus_path.read_bytes()
 
-        second = run_literature_pipeline(
-            config, project_root=tmp_path, corpus_path=corpus
-        )
+        second = run_literature_pipeline(config, project_root=tmp_path, corpus_path=corpus)
         assert second.bibtex_path.read_bytes() == first_bib
         assert second.corpus_path.read_bytes() == first_corpus
 
@@ -188,6 +183,7 @@ class TestRunLiteraturePipeline:
 
         class _ExtraBackend(SearchBackend):
             name = "extra"
+
             def search(self, query):
                 return [Paper(id="extra:1", title="Extra Paper", year=2024)]
 

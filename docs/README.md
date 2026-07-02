@@ -1,6 +1,6 @@
 # template_search_project/docs
 
-Human-facing notes and AI-agent rulebook for this exemplar. For shared literature-search references, see the repo hub [`docs/modules/literature-search-and-references.md`](../../../docs/modules/literature-search-and-references.md) and [`docs/guides/literature-workflow-guide.md`](../../../docs/guides/literature-workflow-guide.md).
+Human-facing notes and AI-agent rulebook for this exemplar. For shared literature-search references, see the repo hub [`docs/modules/literature-search-and-references.md`](../../../../docs/modules/literature-search-and-references.md) and [`docs/guides/literature-workflow-guide.md`](../../../../docs/guides/literature-workflow-guide.md).
 
 ## Quick Index
 

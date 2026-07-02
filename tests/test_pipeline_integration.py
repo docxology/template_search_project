@@ -75,9 +75,7 @@ def test_full_pipeline_end_to_end(tmp_path: Path):
         ),
     )
 
-    artifacts = run_literature_pipeline(
-        config, project_root=project_root, corpus_path=corpus
-    )
+    artifacts = run_literature_pipeline(config, project_root=project_root, corpus_path=corpus)
 
     # 1. references.bib is well-formed and contains our two papers.
     assert artifacts.bibtex_path is not None
@@ -99,10 +97,7 @@ def test_full_pipeline_end_to_end(tmp_path: Path):
     def deterministic_llm(prompt: str) -> str:
         return f"STUB({len(prompt)} chars)"
 
-    per_paper = [
-        synthesise_per_paper(p, citation_keys[p.id], llm=deterministic_llm)
-        for p in artifacts.papers
-    ]
+    per_paper = [synthesise_per_paper(p, citation_keys[p.id], llm=deterministic_llm) for p in artifacts.papers]
     corpus_synth = synthesise_corpus(artifacts.papers, citation_keys, llm=deterministic_llm)
 
     assert all(r.text.startswith("STUB(") for r in per_paper)

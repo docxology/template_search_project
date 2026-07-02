@@ -78,6 +78,7 @@ def test_returned_callable_signature_is_str_to_str():
     signature. We don't invoke it (that would hit Ollama), but we can
     confirm it exposes one positional ``prompt`` argument."""
     import inspect
+
     result = build_llm_callable(**_kwargs())
     assert result is not None
     sig = inspect.signature(result)

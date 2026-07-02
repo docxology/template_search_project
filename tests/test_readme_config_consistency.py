@@ -43,7 +43,7 @@ def _readme_text() -> str:
     "section,key,attr_path,expected_repr",
     [
         # search:
-        ("search", "query", "search.query", "`\"reproducible research optimization\"`"),
+        ("search", "query", "search.query", '`"reproducible research optimization"`'),
         ("search", "max_results", "search.max_results", "`100`"),
         ("search", "sources", "search.sources", "`[local]`"),
         ("search", "local_corpus", "search.local_corpus", "`data/corpus.json`"),
@@ -87,9 +87,7 @@ def _readme_text() -> str:
         ("top", "references_path", "references_path", "`manuscript/references.bib`"),
     ],
 )
-def test_readme_documented_default_matches_loader(
-    section: str, key: str, attr_path: str, expected_repr: str
-) -> None:
+def test_readme_documented_default_matches_loader(section: str, key: str, attr_path: str, expected_repr: str) -> None:
     """The README cell for ``key`` must literally contain the value the
     loader returns for the matching attribute on the ``ProjectConfig``.
 
@@ -107,7 +105,7 @@ def test_readme_documented_default_matches_loader(
     elif isinstance(obj, list):
         live_repr = f"`[{', '.join(obj)}]`"
     elif isinstance(obj, str) and obj == "reproducible research optimization":
-        live_repr = "`\"reproducible research optimization\"`"
+        live_repr = '`"reproducible research optimization"`'
     else:
         live_repr = f"`{obj}`"
 

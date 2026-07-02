@@ -10,7 +10,8 @@ from pathlib import Path
 import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-REPO_ROOT = PROJECT_ROOT.parent.parent
+# Project lives at projects/templates/<name>/; repo root is three levels up.
+REPO_ROOT = PROJECT_ROOT.parents[2]
 
 
 def _run(script: str, args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -30,13 +31,9 @@ def _make_run(tmp_path: Path) -> Path:
     (project_root / "manuscript").mkdir()
     (project_root / "data").mkdir()
     corpus_src = PROJECT_ROOT / "data" / "corpus.json"
-    (project_root / "data" / "corpus.json").write_text(
-        corpus_src.read_text(encoding="utf-8"), encoding="utf-8"
-    )
+    (project_root / "data" / "corpus.json").write_text(corpus_src.read_text(encoding="utf-8"), encoding="utf-8")
     config_src = PROJECT_ROOT / "manuscript" / "config.yaml"
-    (project_root / "manuscript" / "config.yaml").write_text(
-        config_src.read_text(encoding="utf-8"), encoding="utf-8"
-    )
+    (project_root / "manuscript" / "config.yaml").write_text(config_src.read_text(encoding="utf-8"), encoding="utf-8")
     return project_root
 
 
@@ -45,8 +42,10 @@ def test_run_search_pipeline_offline_smoke(tmp_path: Path):
     result = _run(
         "run_search_pipeline.py",
         [
-            "--config", str(project_root / "manuscript" / "config.yaml"),
-            "--project-root", str(project_root),
+            "--config",
+            str(project_root / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(project_root),
             "--no-llm",
         ],
     )
@@ -67,8 +66,10 @@ def test_generate_search_figures(tmp_path: Path):
     pipeline_result = _run(
         "run_search_pipeline.py",
         [
-            "--config", str(project_root / "manuscript" / "config.yaml"),
-            "--project-root", str(project_root),
+            "--config",
+            str(project_root / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(project_root),
             "--no-llm",
         ],
     )
@@ -112,15 +113,12 @@ def test_run_deep_search_disabled_exits_zero(tmp_path: Path):
     (iso / "manuscript").mkdir()
     # Minimal config with deep_search disabled (default).
     (iso / "manuscript" / "config.yaml").write_text(
-        "paper:\n  title: 'X'\n"
-        "search:\n  query: 'x'\n  sources: [local]\n"
-        "deep_search:\n  enabled: false\n",
+        "paper:\n  title: 'X'\nsearch:\n  query: 'x'\n  sources: [local]\ndeep_search:\n  enabled: false\n",
         encoding="utf-8",
     )
     result = _run(
         "run_deep_search.py",
-        ["--config", str(iso / "manuscript" / "config.yaml"),
-         "--project-root", str(iso)],
+        ["--config", str(iso / "manuscript" / "config.yaml"), "--project-root", str(iso)],
     )
     assert result.returncode == 0
     assert "skipping deep search" in (result.stderr + result.stdout).lower()
@@ -134,9 +132,7 @@ def test_run_deep_search_enabled_with_corpus(tmp_path: Path):
     (iso / "data").mkdir()
     # Copy bundled corpus.
     bundled_corpus = PROJECT_ROOT / "data" / "corpus.json"
-    (iso / "data" / "corpus.json").write_text(
-        bundled_corpus.read_text(encoding="utf-8"), encoding="utf-8"
-    )
+    (iso / "data" / "corpus.json").write_text(bundled_corpus.read_text(encoding="utf-8"), encoding="utf-8")
     (iso / "manuscript" / "config.yaml").write_text(
         "paper:\n  title: 'X'\n"
         "search:\n  query: 'x'\n  sources: [local]\n"
@@ -154,11 +150,16 @@ def test_run_deep_search_enabled_with_corpus(tmp_path: Path):
     result = _run(
         "run_deep_search.py",
         [
-            "--config", str(iso / "manuscript" / "config.yaml"),
-            "--project-root", str(iso),
-            "--enable", "--no-llm",
-            "--keyword", "convex",
-            "--corpus", str(iso / "data" / "corpus.json"),
+            "--config",
+            str(iso / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(iso),
+            "--enable",
+            "--no-llm",
+            "--keyword",
+            "convex",
+            "--corpus",
+            str(iso / "data" / "corpus.json"),
         ],
     )
     assert result.returncode == 0, result.stderr

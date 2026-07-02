@@ -82,6 +82,7 @@ def test_pipeline_writes_collision_free_bib(tmp_path: Path):
 
     class _Colliding(SearchBackend):
         name = "fake"
+
         def search(self, query):
             return [
                 Paper(id="x:1", title="Method One", authors=["Smith, A"], year=2024),
@@ -126,8 +127,7 @@ def test_enrichment_log_persisted(tmp_path: Path):
     # call — the log-write path is what we're verifying here.
     (tmp_path / "data").mkdir()
     (tmp_path / "data" / "corpus.json").write_text(
-        '[{"id": "arxiv:1", "title": "x research", "year": 2020,'
-        ' "abstract": "An abstract."}]',
+        '[{"id": "arxiv:1", "title": "x research", "year": 2020, "abstract": "An abstract."}]',
         encoding="utf-8",
     )
 
@@ -135,6 +135,7 @@ def test_enrichment_log_persisted(tmp_path: Path):
     log_path = tmp_path / "output" / "enrichment_log.json"
     assert log_path.exists()
     import json
+
     payload = json.loads(log_path.read_text(encoding="utf-8"))
     assert isinstance(payload, list)
     assert payload[0]["paper_id"] == "arxiv:1"
@@ -158,9 +159,7 @@ def test_local_corpus_resolved_from_config(tmp_path: Path):
         report=ReportConfig(),
     )
     (tmp_path / "data").mkdir()
-    (tmp_path / "data" / "corpus.json").write_text(
-        '[{"id": "x:1", "title": "Convex"}]', encoding="utf-8"
-    )
+    (tmp_path / "data" / "corpus.json").write_text('[{"id": "x:1", "title": "Convex"}]', encoding="utf-8")
 
     artifacts = run_literature_pipeline(config, project_root=tmp_path)
     # Should have found the corpus without an explicit corpus_path argument.

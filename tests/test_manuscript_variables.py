@@ -78,7 +78,9 @@ def test_compute_variables_deep_and_aggregate():
 def test_compute_variables_year_filter_strings():
     payload = _payload()
     vars_ = compute_variables(
-        config_query="x", config_max_results=5, config_sources=["arxiv"],
+        config_query="x",
+        config_max_results=5,
+        config_sources=["arxiv"],
         search_result_payload=payload,
     )
     assert vars_.result_year_min == "2010"
@@ -88,7 +90,9 @@ def test_compute_variables_year_filter_strings():
 def test_compute_variables_errors_serialized():
     payload = _payload(errors={"crossref": "HTTP 503"})
     vars_ = compute_variables(
-        config_query="x", config_max_results=5, config_sources=[],
+        config_query="x",
+        config_max_results=5,
+        config_sources=[],
         search_result_payload=payload,
     )
     assert "crossref" in vars_.result_errors
@@ -97,7 +101,9 @@ def test_compute_variables_errors_serialized():
 
 def test_compute_variables_no_errors_says_none():
     vars_ = compute_variables(
-        config_query="x", config_max_results=5, config_sources=[],
+        config_query="x",
+        config_max_results=5,
+        config_sources=[],
         search_result_payload=_payload(),
     )
     assert vars_.result_errors == "none"
@@ -105,7 +111,9 @@ def test_compute_variables_no_errors_says_none():
 
 def test_uppercase_keys_format():
     vars_ = compute_variables(
-        config_query="x", config_max_results=5, config_sources=["local"],
+        config_query="x",
+        config_max_results=5,
+        config_sources=["local"],
         search_result_payload=_payload(),
     )
     upper = vars_.as_uppercase_keys()
@@ -117,7 +125,9 @@ def test_uppercase_keys_format():
 
 def test_substitute_in_text():
     vars_ = compute_variables(
-        config_query="my topic", config_max_results=5, config_sources=["local"],
+        config_query="my topic",
+        config_max_results=5,
+        config_sources=["local"],
         search_result_payload=_payload(papers=[{"title": "P"}]),
         deep_search=_deep(),
         aggregate_payload={"unique_papers": [{}]},
@@ -135,7 +145,9 @@ def test_substitute_in_text():
 
 def test_substitute_leaves_unmatched_markers(tmp_path: Path):
     vars_ = compute_variables(
-        config_query="x", config_max_results=5, config_sources=[],
+        config_query="x",
+        config_max_results=5,
+        config_sources=[],
         search_result_payload=_payload(),
     )
     out = substitute_in_text("{{NOT_A_VAR}} stays", vars_)
@@ -144,7 +156,9 @@ def test_substitute_leaves_unmatched_markers(tmp_path: Path):
 
 def test_write_variables_round_trip(tmp_path: Path):
     vars_ = compute_variables(
-        config_query="x", config_max_results=5, config_sources=["local"],
+        config_query="x",
+        config_max_results=5,
+        config_sources=["local"],
         search_result_payload=_payload(),
     )
     path = write_variables(vars_, tmp_path / "vars.json")

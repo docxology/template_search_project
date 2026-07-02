@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Hydrate manuscript variables for the search project.
 
-Mirrors ``projects/template_code_project/scripts/z_generate_manuscript_variables.py``:
+Mirrors ``projects/templates/template_code_project/scripts/z_generate_manuscript_variables.py``:
 reads the run's diagnostic outputs, computes substitution variables, writes them
 to JSON, and writes resolved markdown plus auxiliary files under
 ``output/manuscript/`` so the PDF-rendering stage renders substituted prose (see
@@ -21,8 +21,11 @@ import sys
 from pathlib import Path
 
 _project_root = Path(__file__).resolve().parent.parent
+# Project lives at projects/templates/<name>/; repo root is three levels up.
+_repo_root = _project_root.parents[2]
 sys.path.insert(0, str(_project_root))
 sys.path.insert(0, str(_project_root / "src"))
+sys.path.insert(0, str(_repo_root))
 
 from infrastructure.core.logging.utils import get_logger
 

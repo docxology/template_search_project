@@ -1,6 +1,6 @@
 # Manuscript Syntax Reference (search_project)
 
-Project-specific overlay on the canonical [`docs/guides/manuscript-semantics.md`](../../../docs/guides/manuscript-semantics.md) — read that file first; this file documents **search_project**-specific conventions.
+Project-specific overlay on the canonical [`docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md) — read that file first; this file documents **search_project**-specific conventions.
 
 The search exemplar is the only one of the three template projects that **auto-populates** its bibliography. Two `.bib` files coexist:
 
@@ -25,9 +25,9 @@ When you write a manual `[@key]` reference, the key must already exist in either
 
 ```bash
 uv run python -m infrastructure.reference.citation.cli validate \
-    projects/template_search_project/manuscript/references.bib --strict
+    projects/templates/template_search_project/manuscript/references.bib --strict
 uv run python -m infrastructure.reference.citation.cli validate \
-    projects/template_search_project/manuscript/references_deep.bib --strict
+    projects/templates/template_search_project/manuscript/references_deep.bib --strict
 ```
 
 ## Section labels
@@ -90,8 +90,8 @@ When a token has no value (e.g. before any deep-search run), the resolver substi
 
 ## See also
 
-- [`../../../docs/guides/manuscript-semantics.md`](../../../docs/guides/manuscript-semantics.md) — Repository-wide canonical semantics
+- [`../../../../docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md) — Repository-wide canonical semantics
 - [`AGENTS.md`](AGENTS.md) — Substitution-marker registry
 - [`../docs/output_conventions.md`](../docs/output_conventions.md) — What lands in `output/`
-- [`../../../infrastructure/search/literature/SKILL.md`](../../../infrastructure/search/literature/SKILL.md) — Search backend API
-- [`../../../infrastructure/reference/citation/SKILL.md`](../../../infrastructure/reference/citation/SKILL.md) — BibTeX read/write API
+- [`../../../../infrastructure/search/literature/SKILL.md`](../../../../infrastructure/search/literature/SKILL.md) — Search backend API
+- [`../../../../infrastructure/reference/citation/SKILL.md`](../../../../infrastructure/reference/citation/SKILL.md) — BibTeX read/write API

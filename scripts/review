@@ -11,10 +11,10 @@ review_config.yaml.  Each stage is either:
 Configuration lives in ``review_config.yaml`` at the project root.
 
 Usage:
-    uv run python projects/template_search_project/scripts/review
-    uv run python projects/template_search_project/scripts/review --stage bibliography_completeness
-    uv run python projects/template_search_project/scripts/review --fail-fast
-    uv run python projects/template_search_project/scripts/review --list
+    uv run python projects/templates/template_search_project/scripts/review
+    uv run python projects/templates/template_search_project/scripts/review --stage bibliography_completeness
+    uv run python projects/templates/template_search_project/scripts/review --fail-fast
+    uv run python projects/templates/template_search_project/scripts/review --list
 """
 
 from __future__ import annotations

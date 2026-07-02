@@ -128,9 +128,7 @@ def test_check_determinism_artifacts_reads_total_papers(tmp_path: Path) -> None:
     (out / "run_summary.json").write_text('{"total_papers": 17}', encoding="utf-8")
     mdir = tmp_path / "manuscript"
     mdir.mkdir()
-    (mdir / "config.yaml").write_text(
-        "llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8"
-    )
+    (mdir / "config.yaml").write_text("llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8")
     res = check_determinism_artifacts(tmp_path)
     assert res.status == "passed"
     assert res.details["findings"]["papers_found"] == 17
@@ -189,9 +187,7 @@ def _build_isolated_project(tmp_path: Path, *, test_body: str = "def test_ok():\
     (tests / "test_local.py").write_text(test_body, encoding="utf-8")
     # Avoid inheriting the repo-level pyproject coverage settings that would
     # require additional plugins to be loaded under the isolated subprocess.
-    (proj / "pyproject.toml").write_text(
-        "[tool.pytest.ini_options]\nminversion='7.0'\n", encoding="utf-8"
-    )
+    (proj / "pyproject.toml").write_text("[tool.pytest.ini_options]\nminversion='7.0'\n", encoding="utf-8")
     return proj
 
 
@@ -219,13 +215,24 @@ def test_analysis_cli_infrastructure_usage(tmp_path: Path) -> None:
     """CLI dispatch covers the infrastructure_usage stage."""
     src = tmp_path / "src"
     src.mkdir()
-    (src / "__init__.py").write_text("from infrastructure.search.literature import Paper  # noqa: F401\n", encoding="utf-8")
+    (src / "__init__.py").write_text(
+        "from infrastructure.search.literature import Paper  # noqa: F401\n", encoding="utf-8"
+    )
     (tmp_path / "manuscript").mkdir()
-    repo_root = PROJECT_ROOT.parent.parent
+    # Project lives at projects/templates/<name>/; repo root is three levels up.
+    repo_root = PROJECT_ROOT.parents[2]
     proc = subprocess.run(
-        [sys.executable, str(PROJECT_ROOT / "src" / "analysis.py"),
-         "--stage", "infrastructure_usage", "--project-root", str(tmp_path)],
-        cwd=str(repo_root), capture_output=True, text=True,
+        [
+            sys.executable,
+            str(PROJECT_ROOT / "src" / "analysis.py"),
+            "--stage",
+            "infrastructure_usage",
+            "--project-root",
+            str(tmp_path),
+        ],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 0, proc.stderr
     payload = json.loads(proc.stdout)
@@ -234,11 +241,20 @@ def test_analysis_cli_infrastructure_usage(tmp_path: Path) -> None:
 
 def test_analysis_cli_determinism_check_failed(tmp_path: Path) -> None:
     """CLI dispatch covers the determinism_check stage on an empty project."""
-    repo_root = PROJECT_ROOT.parent.parent
+    # Project lives at projects/templates/<name>/; repo root is three levels up.
+    repo_root = PROJECT_ROOT.parents[2]
     proc = subprocess.run(
-        [sys.executable, str(PROJECT_ROOT / "src" / "analysis.py"),
-         "--stage", "determinism_check", "--project-root", str(tmp_path)],
-        cwd=str(repo_root), capture_output=True, text=True,
+        [
+            sys.executable,
+            str(PROJECT_ROOT / "src" / "analysis.py"),
+            "--stage",
+            "determinism_check",
+            "--project-root",
+            str(tmp_path),
+        ],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 1
     payload = json.loads(proc.stdout)
@@ -247,11 +263,20 @@ def test_analysis_cli_determinism_check_failed(tmp_path: Path) -> None:
 
 def test_analysis_cli_test_suite_health_missing_tests(tmp_path: Path) -> None:
     """CLI dispatch covers the test_suite_health stage when tests/ is absent."""
-    repo_root = PROJECT_ROOT.parent.parent
+    # Project lives at projects/templates/<name>/; repo root is three levels up.
+    repo_root = PROJECT_ROOT.parents[2]
     proc = subprocess.run(
-        [sys.executable, str(PROJECT_ROOT / "src" / "analysis.py"),
-         "--stage", "test_suite_health", "--project-root", str(tmp_path)],
-        cwd=str(repo_root), capture_output=True, text=True,
+        [
+            sys.executable,
+            str(PROJECT_ROOT / "src" / "analysis.py"),
+            "--stage",
+            "test_suite_health",
+            "--project-root",
+            str(tmp_path),
+        ],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 2
     payload = json.loads(proc.stdout)
@@ -314,12 +339,12 @@ def test_extract_citation_keys_handles_empty_brackets() -> None:
 def test_extract_citation_keys_handles_multicite_and_crossref() -> None:
     """The citation extractor must:
 
-      * split multi-cite ``[@a; @b]`` into two keys,
-      * drop pandoc-crossref labels (``[@sec:foo]``, ``[@fig:bar]``,
-        ``[@tbl:t1]``, ``[@eq:e]``, ``[@lst:l]``),
-      * strip locators (``[@key, p. 5]``) and author/suppression
-        markers (``[-@k]``, ``[+@k]``),
-      * leave plain single citations untouched.
+    * split multi-cite ``[@a; @b]`` into two keys,
+    * drop pandoc-crossref labels (``[@sec:foo]``, ``[@fig:bar]``,
+      ``[@tbl:t1]``, ``[@eq:e]``, ``[@lst:l]``),
+    * strip locators (``[@key, p. 5]``) and author/suppression
+      markers (``[-@k]``, ``[+@k]``),
+    * leave plain single citations untouched.
     """
     from src.analysis import _extract_citation_keys
 
@@ -398,9 +423,7 @@ def test_validate_bibliography_completeness_skips_references_section(tmp_path: P
     (md / "01_intro.md").write_text("Body cites [@k1].", encoding="utf-8")
     # 99_references.md mentions a key that does NOT exist; this must be
     # ignored because the file itself is the bibliography pointer.
-    (md / "99_references.md").write_text(
-        "Pointer: [@k1] [@absent_key_only_listed_here]", encoding="utf-8"
-    )
+    (md / "99_references.md").write_text("Pointer: [@k1] [@absent_key_only_listed_here]", encoding="utf-8")
     res = validate_bibliography_completeness(tmp_path)
     assert res.status == "passed"
     assert "absent_key_only_listed_here" not in res.details["cited_keys"]
@@ -413,9 +436,7 @@ def test_check_determinism_missing_search_cache_dir(tmp_path: Path) -> None:
     (out / "run_summary.json").write_text("{}", encoding="utf-8")
     mdir = tmp_path / "manuscript"
     mdir.mkdir()
-    (mdir / "config.yaml").write_text(
-        "llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8"
-    )
+    (mdir / "config.yaml").write_text("llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8")
     res = check_determinism_artifacts(tmp_path)
     assert res.status == "failed"
     assert any("cache directory not present" in i for i in res.details["issues"])
@@ -431,7 +452,8 @@ def test_check_determinism_temperature_missing(tmp_path: Path) -> None:
     mdir.mkdir()
     (mdir / "config.yaml").write_text(
         # temperature absent on purpose
-        "llm:\n  seed: 1\n", encoding="utf-8"
+        "llm:\n  seed: 1\n",
+        encoding="utf-8",
     )
     res = check_determinism_artifacts(tmp_path)
     assert res.status == "failed"
@@ -443,7 +465,8 @@ def test_analysis_cli_bibliography_completeness(tmp_path: Path) -> None:
     md.mkdir()
     (md / "references.bib").write_text("@article{a,\ntitle={t}\n}\n", encoding="utf-8")
     (md / "x.md").write_text("", encoding="utf-8")
-    repo_root = PROJECT_ROOT.parent.parent
+    # Project lives at projects/templates/<name>/; repo root is three levels up.
+    repo_root = PROJECT_ROOT.parents[2]
     proc = subprocess.run(
         [
             sys.executable,
@@ -466,7 +489,8 @@ def test_analysis_cli_variables_resolved(tmp_path: Path) -> None:
     md = tmp_path / "manuscript"
     md.mkdir()
     (md / "x.md").write_text("{{BAD}}", encoding="utf-8")
-    repo_root = PROJECT_ROOT.parent.parent
+    # Project lives at projects/templates/<name>/; repo root is three levels up.
+    repo_root = PROJECT_ROOT.parents[2]
     proc = subprocess.run(
         [
             sys.executable,

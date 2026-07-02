@@ -213,7 +213,8 @@ def audit_infrastructure_imports(project_root: Path) -> StageResult:
     import ast
 
     src_dir = project_root / "src"
-    infra_root = Path(__file__).resolve().parents[2].parent / "infrastructure"
+    # __file__ is projects/templates/<name>/src/analysis.py; repo root is five levels up.
+    infra_root = Path(__file__).resolve().parents[4] / "infrastructure"
 
     issues: list[str] = []
     infra_imports_used: dict[str, set[str]] = {}

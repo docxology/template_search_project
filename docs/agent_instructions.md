@@ -26,21 +26,21 @@ For navigation, [`README.md`](README.md) lists every doc by audience.
 
 ---
 
-## Rule 2: Coverage Gate — 266 Tests, ~99.5% on `src/`
+## Rule 2: Coverage Gate — 90% Floor on `src/`
 
-The current test suite collects **266 tests** across nineteen `test_*.py` files (265 passed, 1 skipped) and achieves approximately **99.50% line coverage** on `projects/template_search_project/src/`. The gate is 90% (set by the project `pyproject.toml` and re-enforced at the root pipeline).
+Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md); the suite runs well above the 90% gate (set by the project `pyproject.toml` and re-enforced at the root pipeline).
 
 Before modifying any file in `src/`, count the tests that exercise it. After modifying, run:
 
 ```bash
-uv run pytest projects/template_search_project/tests/ \
-    --cov=projects/template_search_project/src \
+uv run pytest projects/templates/template_search_project/tests/ \
+    --cov=projects/templates/template_search_project/src \
     --cov-fail-under=90 \
     --cov-report=term-missing \
     -q
 ```
 
-The current ~99.5% leaves a buffer before the gate; do not consume it gratuitously, and do not delete tests to make a number work — fix the gap.
+The current margin leaves buffer before the gate; do not consume it gratuitously, and do not delete tests to make a number work — fix the gap.
 
 ---
 
@@ -77,7 +77,7 @@ Our pipeline uses standard literature-search APIs and produces a citation list.
 `infrastructure.search.literature.LiteratureClient.search` against the backends
 listed in `config.search.sources`, then writes BibTeX entries via
 `infrastructure.reference.citation.paper_to_bibentry` to
-`projects/template_search_project/manuscript/references.bib`.
+`projects/templates/template_search_project/manuscript/references.bib`.
 ```
 
 **BAD**:
@@ -131,7 +131,7 @@ Do not apply code-style rules to manuscript prose, and do not apply manuscript s
 
 ## Rule 7: `output/` Is Disposable — Never Edit Generated Files
 
-The entire `projects/template_search_project/output/` tree (and the auto-populated files `manuscript/references.bib`, `manuscript/references_deep.bib`, `manuscript/S01_literature_review.md`) is rewritten on every run. Editing those files has zero lasting effect.
+The entire `projects/templates/template_search_project/output/` tree (and the auto-populated files `manuscript/references.bib`, `manuscript/references_deep.bib`, `manuscript/S01_literature_review.md`) is rewritten on every run. Editing those files has zero lasting effect.
 
 If you need to change what a generated file contains, change the **generator**:
 
@@ -151,21 +151,21 @@ Run all four commands before submitting any change to this project:
 
 ```bash
 # 1. Tests pass and coverage gate is met
-uv run pytest projects/template_search_project/tests/ \
-    --cov=projects/template_search_project/src \
+uv run pytest projects/templates/template_search_project/tests/ \
+    --cov=projects/templates/template_search_project/src \
     --cov-fail-under=90 -q
 
 # 2. No mocks anywhere in tests/
 grep -rE "unittest\.mock|MagicMock|@patch|create_autospec" \
-    projects/template_search_project/tests/ || echo "Clean — no mocks found"
+    projects/templates/template_search_project/tests/ || echo "Clean — no mocks found"
 
 # 3. src/ touches only the permitted infrastructure modules
 #    (search, reference.citation, llm — never .scientific / .reporting / .rendering)
 grep -rE "from infrastructure\.(scientific|reporting|rendering)" \
-    projects/template_search_project/src/ || echo "Clean — src/ stays in its lane"
+    projects/templates/template_search_project/src/ || echo "Clean — src/ stays in its lane"
 
 # 4. The configurable review CLI is wired
-cd projects/template_search_project && uv run python scripts/review --list
+cd projects/templates/template_search_project && uv run python scripts/review --list
 ```
 
 Checks 2 and 3 must produce the "Clean" message. Check 4 must list the nine review stages without raising.

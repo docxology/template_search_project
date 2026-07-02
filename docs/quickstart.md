@@ -19,7 +19,7 @@ flowchart TB
 ## 1. Smoke-test in 5 seconds
 
 ```bash
-uv run pytest projects/template_search_project/tests/ -q
+uv run pytest projects/templates/template_search_project/tests/ -q
 ```
 
 All 30+ tests should pass without an internet connection.
@@ -27,7 +27,7 @@ All 30+ tests should pass without an internet connection.
 ## 2. Run the orchestrator end-to-end (offline)
 
 ```bash
-uv run python projects/template_search_project/scripts/run_search_pipeline.py
+uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py
 ```
 
 This reads `manuscript/config.yaml` (default: `sources: [local]` ←
@@ -45,8 +45,8 @@ This reads `manuscript/config.yaml` (default: `sources: [local]` ←
 ## 3. Generate figures + manuscript variables
 
 ```bash
-uv run python projects/template_search_project/scripts/y_generate_search_figures.py
-uv run python projects/template_search_project/scripts/z_generate_manuscript_variables.py
+uv run python projects/templates/template_search_project/scripts/y_generate_search_figures.py
+uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
 ```
 
 Outputs:
@@ -58,7 +58,7 @@ Outputs:
 ## 4. Run under the full pipeline
 
 ```bash
-./run.sh --project template_search_project --pipeline
+./run.sh --project templates/template_search_project --pipeline
 ```
 
 The infrastructure pipeline runner:

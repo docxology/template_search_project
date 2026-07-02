@@ -20,7 +20,8 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-REPO_ROOT = PROJECT_ROOT.parent.parent
+# Project lives at projects/templates/<name>/; repo root is three levels up.
+REPO_ROOT = PROJECT_ROOT.parents[2]
 
 # These are the analysis scripts the project ships. The order below is the
 # REQUIRED execution order; any change must also update ``scripts/AGENTS.md``.
@@ -52,9 +53,7 @@ def test_composer_sorts_before_manuscript_resolver() -> None:
     """The composer filename must sort strictly before the resolver filename."""
     composer = "s_compose_literature_review.py"
     resolver = "z_generate_manuscript_variables.py"
-    assert composer < resolver, (
-        f"Composer filename '{composer}' must sort before resolver '{resolver}'."
-    )
+    assert composer < resolver, f"Composer filename '{composer}' must sort before resolver '{resolver}'."
 
 
 def _seed_project(tmp_path: Path) -> Path:
@@ -91,9 +90,7 @@ def _seed_project(tmp_path: Path) -> Path:
         ],
         "citation_keys": {"doi:10.1/x": "alice2020convexity"},
     }
-    (iso / "output" / "deep_search" / "aggregate.json").write_text(
-        json.dumps(aggregate), encoding="utf-8"
-    )
+    (iso / "output" / "deep_search" / "aggregate.json").write_text(json.dumps(aggregate), encoding="utf-8")
     (iso / "output" / "deep_search" / "convex" / "papers.json").write_text(
         json.dumps(
             {
@@ -106,8 +103,7 @@ def _seed_project(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     (iso / "manuscript" / "references_deep.bib").write_text(
-        "@article{alice2020convexity,\n  title={On Convexity},\n"
-        "  author={Alice},\n  year={2020},\n  doi={10.1/x}\n}\n",
+        "@article{alice2020convexity,\n  title={On Convexity},\n  author={Alice},\n  year={2020},\n  doi={10.1/x}\n}\n",
         encoding="utf-8",
     )
 
@@ -129,10 +125,14 @@ def test_composer_overwrites_stale_output_manuscript_copy(tmp_path: Path) -> Non
         [
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
-            "--config", str(iso / "manuscript" / "config.yaml"),
-            "--project-root", str(iso),
+            "--config",
+            str(iso / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(iso),
         ],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 0, proc.stderr
 
@@ -165,26 +165,24 @@ def test_resolver_then_composer_ordering_breaks_invariant(tmp_path: Path) -> Non
     # (still-stale) manuscript/S01 we will create in a moment to
     # output/manuscript/. The fresh manuscript/S01 doesn't exist yet so
     # we create a placeholder that mimics the prior-run S01.
-    stale_manuscript_s01 = (
-        "STALE manuscript copy — references [@ghost_legacy_key].\n"
-    )
-    (iso / "manuscript" / "S01_literature_review.md").write_text(
-        stale_manuscript_s01, encoding="utf-8"
-    )
+    stale_manuscript_s01 = "STALE manuscript copy — references [@ghost_legacy_key].\n"
+    (iso / "manuscript" / "S01_literature_review.md").write_text(stale_manuscript_s01, encoding="utf-8")
     # Resolver-style copy:
-    (iso / "output" / "manuscript" / "S01_literature_review.md").write_text(
-        stale_manuscript_s01, encoding="utf-8"
-    )
+    (iso / "output" / "manuscript" / "S01_literature_review.md").write_text(stale_manuscript_s01, encoding="utf-8")
 
     # Step B: composer runs, regenerating manuscript/S01 with the LIVE key.
     proc = subprocess.run(
         [
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
-            "--config", str(iso / "manuscript" / "config.yaml"),
-            "--project-root", str(iso),
+            "--config",
+            str(iso / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(iso),
         ],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 0, proc.stderr
 
@@ -192,9 +190,7 @@ def test_resolver_then_composer_ordering_breaks_invariant(tmp_path: Path) -> Non
     # is also refreshed — even when a previous resolver run staged the
     # stale text. This is precisely the safety net that the regression
     # is meant to enforce.
-    mirrored = (iso / "output" / "manuscript" / "S01_literature_review.md").read_text(
-        encoding="utf-8"
-    )
+    mirrored = (iso / "output" / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
     assert "alice2020convexity" in mirrored
     assert "ghost_legacy_key" not in mirrored
 
@@ -226,11 +222,17 @@ def test_full_two_step_chain_keeps_output_in_sync(tmp_path: Path) -> None:
 
     # Step 1: composer.
     r1 = subprocess.run(
-        [sys.executable,
-         str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
-         "--config", str(iso / "manuscript" / "config.yaml"),
-         "--project-root", str(iso)],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        [
+            sys.executable,
+            str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
+            "--config",
+            str(iso / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(iso),
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert r1.returncode == 0, r1.stderr
 
@@ -257,14 +259,14 @@ def test_full_two_step_chain_keeps_output_in_sync(tmp_path: Path) -> None:
     )
     r2 = subprocess.run(
         [sys.executable, "-c", resolver_code],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert r2.returncode == 0, r2.stderr
 
     # Final invariant: output/manuscript/S01 must have the live key, never
     # the ghost key.
-    mirrored = (iso / "output" / "manuscript" / "S01_literature_review.md").read_text(
-        encoding="utf-8"
-    )
+    mirrored = (iso / "output" / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
     assert "alice2020convexity" in mirrored
     assert "ghost_legacy_key" not in mirrored

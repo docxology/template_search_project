@@ -80,9 +80,7 @@ class TestReadingReportEdgeCases:
         assert "## Per-Paper Notes" not in text
         assert "## Cross-Corpus Synthesis" not in text
 
-    def test_all_failed_enrichment_papers_render_no_abstract_marker(
-        self, tmp_path: Path
-    ) -> None:
+    def test_all_failed_enrichment_papers_render_no_abstract_marker(self, tmp_path: Path) -> None:
         """Papers whose enrichment failed (no abstract attached) must
         render the documented ``(no abstract)`` placeholder rather than
         the literal Python ``None``."""
@@ -111,18 +109,14 @@ class TestReadingReportEdgeCases:
         assert "(no abstract)" in text
         assert "None" not in text
 
-    def test_per_paper_note_with_unknown_paper_id_uses_question_mark_key(
-        self, tmp_path: Path
-    ) -> None:
+    def test_per_paper_note_with_unknown_paper_id_uses_question_mark_key(self, tmp_path: Path) -> None:
         """``write_reading_report`` is defensive about per-paper entries
         whose ``paper_id`` is not in the citation-key map: it falls back
         to ``paper_id`` itself, then to literal ``"?"``. This branch
         must never crash and the rendered note still includes the
         body text so reviewers see *something*.
         """
-        result = SearchResult(
-            query=SearchQuery(text="t"), papers=[], per_source_counts={}
-        )
+        result = SearchResult(query=SearchQuery(text="t"), papers=[], per_source_counts={})
         out = write_reading_report(
             tmp_path / "r.md",
             search_result=result,
@@ -190,7 +184,10 @@ class TestYearBackfillContract:
     def test_year_present_renders_year_field(self) -> None:
         """Sanity counter-test: when year IS present it's rendered."""
         paper = Paper(
-            id="doi:10.1/x", title="t", authors=["A"], year=2020,
+            id="doi:10.1/x",
+            title="t",
+            authors=["A"],
+            year=2020,
         )
         entry = paper_to_bibentry(paper)
         assert entry.fields["year"] == "2020"
@@ -210,9 +207,7 @@ class TestCacheHashStability:
     This test catches that.
     """
 
-    def test_query_hash_is_byte_stable_for_canonical_query(
-        self, tmp_path: Path
-    ) -> None:
+    def test_query_hash_is_byte_stable_for_canonical_query(self, tmp_path: Path) -> None:
         """The cache filename for the project's canonical bundled query
         is stable: same query → same 16-char hash file → identical
         byte sequence on every Python build the project supports."""
@@ -253,9 +248,7 @@ class TestCacheHashStability:
         expected = hashlib.sha256(expected_payload.encode("utf-8")).hexdigest()[:16]
         assert hex_part == expected
 
-    def test_query_hash_is_case_and_whitespace_insensitive(
-        self, tmp_path: Path
-    ) -> None:
+    def test_query_hash_is_case_and_whitespace_insensitive(self, tmp_path: Path) -> None:
         """Identical queries modulo case/whitespace share a cache file —
         the documented behaviour from ``02_methodology.md::Cache``."""
         cache = SearchCache(tmp_path)
@@ -294,9 +287,7 @@ class TestDotenvDefaultPath:
     ``load_dotenv`` (line 66 — uncovered before this test).
     """
 
-    def test_load_dotenv_default_path_uses_cwd_env(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_load_dotenv_default_path_uses_cwd_env(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """When called with ``path=None`` and no ``.env`` exists in the
         current working directory, the loader must return ``{}``
         without raising — this is the bare-CLI happy path."""
@@ -306,24 +297,18 @@ class TestDotenvDefaultPath:
         applied = load_dotenv()
         assert applied == {}
 
-    def test_load_dotenv_default_path_reads_cwd_env(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_load_dotenv_default_path_reads_cwd_env(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """When ``./.env`` exists in cwd and ``path=None``, the loader
         reads it. This exercises the default-branch ``Path('.env')``
         construction."""
         monkeypatch.chdir(tmp_path)
         monkeypatch.delenv("MY_DEFAULT_PATH_ENV_KEY", raising=False)
-        (tmp_path / ".env").write_text(
-            "MY_DEFAULT_PATH_ENV_KEY=loaded_from_default\n", encoding="utf-8"
-        )
+        (tmp_path / ".env").write_text("MY_DEFAULT_PATH_ENV_KEY=loaded_from_default\n", encoding="utf-8")
         applied = load_dotenv()
         assert applied["MY_DEFAULT_PATH_ENV_KEY"] == "loaded_from_default"
         assert os.environ["MY_DEFAULT_PATH_ENV_KEY"] == "loaded_from_default"
 
-    def test_load_dotenv_extra_paths_loaded(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_load_dotenv_extra_paths_loaded(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """``extra_paths`` is appended after the primary; existing
         environment values still win unless ``override=True``."""
         primary = tmp_path / ".env"
@@ -355,16 +340,13 @@ class TestPromptManuscriptParity:
         TAGS. This test ensures the prompt source agrees byte-for-byte."""
         expected = ["CONTRIBUTION:", "METHOD:", "EVIDENCE:", "LIMITATION:", "TAGS:"]
         for header in expected:
-            assert header in PROMPT_PER_PAPER, (
-                f"PROMPT_PER_PAPER missing {header!r}; methodology says it has it"
-            )
+            assert header in PROMPT_PER_PAPER, f"PROMPT_PER_PAPER missing {header!r}; methodology says it has it"
         # Hard pin: NO other ALL-CAPS section header should appear (e.g.
         # an accidental CONNECTIONS leak from the deep-search prompt).
         forbidden = ["CONNECTIONS:", "SIGNIFICANCE:", "LIMITATIONS:"]
         for header in forbidden:
             assert header not in PROMPT_PER_PAPER, (
-                f"PROMPT_PER_PAPER must not contain {header!r}; "
-                "that header belongs to deep_search.DEEP_PROMPT"
+                f"PROMPT_PER_PAPER must not contain {header!r}; that header belongs to deep_search.DEEP_PROMPT"
             )
 
     def test_deep_prompt_has_exactly_7_sections(self) -> None:
@@ -382,14 +364,10 @@ class TestPromptManuscriptParity:
             "## Tags",
         ]
         for header in expected:
-            assert header in DEEP_PROMPT, (
-                f"DEEP_PROMPT missing {header!r}; deep_search.md says it has it"
-            )
+            assert header in DEEP_PROMPT, f"DEEP_PROMPT missing {header!r}; deep_search.md says it has it"
         # Hard pin: total `##`-headed sections == 7, no more, no less.
         section_count = DEEP_PROMPT.count("\n## ")
-        assert section_count == 7, (
-            f"DEEP_PROMPT has {section_count} sections; manuscript says 7"
-        )
+        assert section_count == 7, f"DEEP_PROMPT has {section_count} sections; manuscript says 7"
 
 
 # ---------------------------------------------------------------------------
@@ -408,14 +386,10 @@ class TestDeterminismEmptyCache:
         (out / "run_summary.json").write_text("{}", encoding="utf-8")
         mdir = tmp_path / "manuscript"
         mdir.mkdir()
-        (mdir / "config.yaml").write_text(
-            "llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8"
-        )
+        (mdir / "config.yaml").write_text("llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8")
         res = check_determinism_artifacts(tmp_path)
         assert res.status == "failed"
-        assert any(
-            "cache directory empty" in i for i in res.details["issues"]
-        )
+        assert any("cache directory empty" in i for i in res.details["issues"])
         assert res.details["findings"]["search_cache_files"] == 0
 
 
@@ -435,9 +409,7 @@ class TestDeterminismSeedMissing:
         mdir = tmp_path / "manuscript"
         mdir.mkdir()
         # llm block present but no `seed` key.
-        (mdir / "config.yaml").write_text(
-            "llm:\n  temperature: 0\n", encoding="utf-8"
-        )
+        (mdir / "config.yaml").write_text("llm:\n  temperature: 0\n", encoding="utf-8")
         res = check_determinism_artifacts(tmp_path)
         assert res.status == "failed"
         assert any("llm.seed not set" in i for i in res.details["issues"])
@@ -467,9 +439,7 @@ class TestLLMRuntimeCallable:
     ``query_long`` (preferred) and ``query`` (fallback) so the
     AttributeError fallback path is exercised."""
 
-    def test_callable_uses_query_long_when_available(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_callable_uses_query_long_when_available(self, monkeypatch: pytest.MonkeyPatch) -> None:
         from src import llm_runtime
 
         class _FakeClient:
@@ -511,9 +481,7 @@ class TestLLMRuntimeCallable:
         out = call("hello")
         assert out == "long-response: hello"
 
-    def test_callable_falls_back_to_query_when_query_long_missing(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_callable_falls_back_to_query_when_query_long_missing(self, monkeypatch: pytest.MonkeyPatch) -> None:
         from src import llm_runtime
 
         class _OldClient:
@@ -559,16 +527,12 @@ class TestAnalysisCLIInProcess:
     """Cover ``analysis._cli`` in-process so coverage tracks it (subprocess
     invocation does not contribute to ``--cov`` totals)."""
 
-    def test_cli_bibliography_completeness_pass(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_cli_bibliography_completeness_pass(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         from src import analysis
 
         md = tmp_path / "manuscript"
         md.mkdir()
-        (md / "references.bib").write_text(
-            "@article{k1,\n title={x}\n}\n", encoding="utf-8"
-        )
+        (md / "references.bib").write_text("@article{k1,\n title={x}\n}\n", encoding="utf-8")
         (md / "01_intro.md").write_text("Cite [@k1].", encoding="utf-8")
         monkeypatch.setattr(
             "sys.argv",
@@ -584,9 +548,7 @@ class TestAnalysisCLIInProcess:
             analysis._cli()
         assert excinfo.value.code == 0
 
-    def test_cli_determinism_check_routes_correctly(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_cli_determinism_check_routes_correctly(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         from src import analysis
 
         # Set up an empty repo skeleton — determinism_check will fail
@@ -658,9 +620,7 @@ class TestDeepSearchEdgeCases:
             write_unified_bibtex=False,  # ← exercises 605->613
             unified_bibtex_path=str(tmp_path / "ref.bib"),
         )
-        artifacts = run_deep_search(
-            cfg, project_root=tmp_path, corpus_path=corpus, llm=None
-        )
+        artifacts = run_deep_search(cfg, project_root=tmp_path, corpus_path=corpus, llm=None)
         assert artifacts.bibtex_path is None
         # Aggregate report exists and DOES NOT contain the bibtex line.
         assert artifacts.aggregate_report_path is not None
@@ -678,9 +638,7 @@ class TestDeepSearchEdgeCases:
 
         corpus = tmp_path / "corpus.json"
         corpus.write_text(
-            json.dumps(
-                [{"id": "doi:10.1/x", "title": "T", "year": 2020, "authors": ["A"]}]
-            ),
+            json.dumps([{"id": "doi:10.1/x", "title": "T", "year": 2020, "authors": ["A"]}]),
             encoding="utf-8",
         )
         cfg = DeepSearchConfig(
@@ -698,9 +656,7 @@ class TestDeepSearchEdgeCases:
             write_unified_bibtex=False,
             unified_bibtex_path=str(tmp_path / "ref.bib"),
         )
-        artifacts = run_deep_search(
-            cfg, project_root=tmp_path, corpus_path=corpus, llm=None
-        )
+        artifacts = run_deep_search(cfg, project_root=tmp_path, corpus_path=corpus, llm=None)
         assert artifacts.unique_papers == 1
 
     def test_per_paper_note_truncates_long_fulltext(self, tmp_path: Path) -> None:
@@ -711,12 +667,8 @@ class TestDeepSearchEdgeCases:
         from src.deep_search import write_per_paper_note
 
         long_text = "x" * 2000  # > 1500
-        paper = _Paper(
-            id="x:1", title="t", year=2020, authors=["A"], fulltext=long_text
-        )
-        out = write_per_paper_note(
-            tmp_path, paper, citation_key="k1", summary=None, keyword="kw"
-        )
+        paper = _Paper(id="x:1", title="t", year=2020, authors=["A"], fulltext=long_text)
+        out = write_per_paper_note(tmp_path, paper, citation_key="k1", summary=None, keyword="kw")
         text = out.read_text(encoding="utf-8")
         assert "## Fulltext excerpt" in text
         assert "..." in text
@@ -751,15 +703,11 @@ class TestDeepSearchEdgeCases:
         from infrastructure.search.literature import Paper as _Paper
         from src.deep_search import build_rich_paper_block
 
-        paper = _Paper(
-            id="x:1", title="t", venue="Some Journal"
-        )  # venue_type is None
+        paper = _Paper(id="x:1", title="t", venue="Some Journal")  # venue_type is None
         block = build_rich_paper_block(paper)
         assert "**Venue:** Some Journal" in block
         # No "(<type>)" suffix.
-        assert "**Venue:** Some Journal\n" in block or block.endswith(
-            "**Venue:** Some Journal"
-        )
+        assert "**Venue:** Some Journal\n" in block or block.endswith("**Venue:** Some Journal")
 
     def test_build_rich_paper_block_locator_without_publisher(self) -> None:
         """Paper with volume/issue but no publisher exercises 247->249
@@ -767,29 +715,21 @@ class TestDeepSearchEdgeCases:
         from infrastructure.search.literature import Paper as _Paper
         from src.deep_search import build_rich_paper_block
 
-        paper = _Paper(
-            id="x:1", title="t", volume="42", issue="7"
-        )  # publisher None
+        paper = _Paper(id="x:1", title="t", volume="42", issue="7")  # publisher None
         block = build_rich_paper_block(paper)
         assert "**Locator:**" in block
         assert "vol 42" in block and "no 7" in block
         assert "**Publisher:**" not in block
 
-    def test_per_paper_note_short_fulltext_no_truncation_marker(
-        self, tmp_path: Path
-    ) -> None:
+    def test_per_paper_note_short_fulltext_no_truncation_marker(self, tmp_path: Path) -> None:
         """Fulltext <= 1500 chars: no truncation ``...`` is appended
         (line 312->314 False branch)."""
         from infrastructure.search.literature import Paper as _Paper
         from src.deep_search import write_per_paper_note
 
         short = "y" * 100
-        paper = _Paper(
-            id="x:2", title="t", fulltext=short
-        )
-        out = write_per_paper_note(
-            tmp_path, paper, citation_key="k", summary=None, keyword="kw"
-        )
+        paper = _Paper(id="x:2", title="t", fulltext=short)
+        out = write_per_paper_note(tmp_path, paper, citation_key="k", summary=None, keyword="kw")
         text = out.read_text(encoding="utf-8")
         assert "## Fulltext excerpt" in text
         # Inside the fenced block, the literal "..." truncation marker
@@ -799,9 +739,7 @@ class TestDeepSearchEdgeCases:
         block = text[block_start:block_end]
         assert "..." not in block
 
-    def test_keyword_report_no_per_source_counts_skips_coverage(
-        self, tmp_path: Path
-    ) -> None:
+    def test_keyword_report_no_per_source_counts_skips_coverage(self, tmp_path: Path) -> None:
         """When ``per_source_counts`` is empty, the '## Coverage' table
         is not emitted (line 347->356 branch). Build a KeywordResult
         with empty per_source_counts and verify the section is absent.

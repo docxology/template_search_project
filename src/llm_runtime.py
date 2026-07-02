@@ -85,7 +85,7 @@ def build_llm_callable(
                 review_timeout=review_timeout,
             )
         )
-    except Exception as exc:  # pragma: no cover - environment-dependent
+    except Exception as exc:  # noqa: BLE001 - safety net: LLM is optional, pipeline continues without it
         logger.warning(
             "Could not initialise LLMClient (%s); skipping LLM synthesis.",
             exc,

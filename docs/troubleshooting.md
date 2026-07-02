@@ -28,7 +28,7 @@ flowchart TB
 
 ## "Pipeline failed in Project Analysis stage"
 
-**Symptom:** `./run.sh --project template_search_project --pipeline` exits
+**Symptom:** `./run.sh --project templates/template_search_project --pipeline` exits
 on stage 4.
 
 **Causes / fixes:**
@@ -127,7 +127,7 @@ after a `--no-cache` run.
 
 ## "Coverage gate failure"
 
-**Symptom:** `pytest projects/template_search_project/tests/` exits with
+**Symptom:** `pytest projects/templates/template_search_project/tests/` exits with
 "coverage below 90".
 
 **Causes / fixes:**
@@ -142,7 +142,7 @@ after a `--no-cache` run.
 ```
 _pytest.pathlib.ImportPathMismatchError: ('tests.conftest', ...)
 ```
-when running `pytest tests/ projects/template_search_project/tests/`
+when running `pytest tests/ projects/templates/template_search_project/tests/`
 together.
 
 **Cause:** Both directories are named `tests/` and pytest's import path

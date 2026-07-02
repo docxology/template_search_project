@@ -2,7 +2,7 @@
 
 This document defines the syntax conventions for documentation and manuscript content inside the `search_project` exemplar. Sections 1–5 are mandatory constraints; sections 6–8 are reference material for common operations.
 
-The canonical, repo-wide manuscript-semantics reference is [`docs/guides/manuscript-semantics.md`](../../../docs/guides/manuscript-semantics.md). The project-local overlay is [`../manuscript/SYNTAX.md`](../manuscript/SYNTAX.md). This file ties them to agent-facing rules.
+The canonical, repo-wide manuscript-semantics reference is [`docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md). The project-local overlay is [`../manuscript/SYNTAX.md`](../manuscript/SYNTAX.md). This file ties them to agent-facing rules.
 
 ---
 
@@ -105,9 +105,9 @@ The "not run" sentinel is intentional: a missing aggregate produces a discoverab
 3. Reference it in a manuscript `.md` file as `{{NEW_TOKEN}}` (the substitution lower-cases internally then uppercases the marker key, so the field name `new_token` becomes `{{NEW_TOKEN}}`).
 4. Run `scripts/z_generate_manuscript_variables.py` and verify the JSON contains the key:
    ```bash
-   uv run python projects/template_search_project/scripts/z_generate_manuscript_variables.py
+   uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
    python -c "import json,sys; d=json.load(open(sys.argv[1])); print(d['new_token'])" \
-       projects/template_search_project/output/data/manuscript_variables.json
+       projects/templates/template_search_project/output/data/manuscript_variables.json
    ```
 
 ### Detecting Unresolved Tokens
@@ -115,7 +115,7 @@ The "not run" sentinel is intentional: a missing aggregate produces a discoverab
 If a token remains unresolved, the literal `{{TOKEN_NAME}}` will appear in the rendered PDF. Detect before rendering:
 
 ```bash
-grep -rn "{{[A-Z_]*}}" projects/template_search_project/output/manuscript/ \
+grep -rn "{{[A-Z_]*}}" projects/templates/template_search_project/output/manuscript/ \
   && echo "UNRESOLVED TOKENS FOUND" || echo "All tokens resolved"
 ```
 
@@ -134,7 +134,7 @@ def example() -> bool:
 
 For shell commands:
 ```bash
-uv run pytest projects/template_search_project/tests/ -q
+uv run pytest projects/templates/template_search_project/tests/ -q
 ```
 
 For YAML snippets:
@@ -143,7 +143,7 @@ search:
   sources: [local]
 ```
 
-For inline code referencing file paths, use single backticks: `projects/template_search_project/src/pipeline.py`.
+For inline code referencing file paths, use single backticks: `projects/templates/template_search_project/src/pipeline.py`.
 
 ---
 
@@ -211,7 +211,7 @@ Validate keys before render:
 
 ```bash
 uv run python -m infrastructure.reference.citation.cli validate \
-    projects/template_search_project/manuscript/references.bib --strict
+    projects/templates/template_search_project/manuscript/references.bib --strict
 uv run python -m infrastructure.reference.citation.cli validate \
-    projects/template_search_project/manuscript/references_deep.bib --strict
+    projects/templates/template_search_project/manuscript/references_deep.bib --strict
 ```

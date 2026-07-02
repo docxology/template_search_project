@@ -14,8 +14,8 @@ The pipeline has five phases. Each phase must complete before the next begins. T
 
 **Commands**:
 ```bash
-uv run python projects/template_search_project/scripts/run_deep_search.py
-uv run python projects/template_search_project/scripts/run_search_pipeline.py
+uv run python projects/templates/template_search_project/scripts/run_deep_search.py
+uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py
 ```
 
 **Inputs**: `manuscript/config.yaml` (sections `search`, `enrichment`, `llm`, `deep_search`) plus `data/corpus.json` when `search.sources` includes `local`.
@@ -51,7 +51,7 @@ uv run python projects/template_search_project/scripts/run_search_pipeline.py
 
 **Command**:
 ```bash
-uv run python projects/template_search_project/scripts/s_compose_literature_review.py
+uv run python projects/templates/template_search_project/scripts/s_compose_literature_review.py
 ```
 
 **Inputs**: `output/deep_search/aggregate.json` + per-keyword `papers.json` + per-paper notes.
@@ -68,8 +68,8 @@ The composer runs **between** the search runners (`run_*`) and the variable reso
 
 **Commands**:
 ```bash
-uv run python projects/template_search_project/scripts/y_generate_search_figures.py
-uv run python projects/template_search_project/scripts/z_generate_manuscript_variables.py
+uv run python projects/templates/template_search_project/scripts/y_generate_search_figures.py
+uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
 ```
 
 **Inputs**: `output/search/results.json` (figures) + `manuscript/config.yaml` + `output/deep_search/aggregate.json` when present (variables).
@@ -99,7 +99,7 @@ uv run python projects/template_search_project/scripts/z_generate_manuscript_var
 
 **Command**:
 ```bash
-uv run python scripts/03_render_pdf.py --project template_search_project
+uv run python scripts/03_render_pdf.py --project templates/template_search_project
 ```
 
 **Inputs**: `output/manuscript/*.md` (resolved) + `manuscript/config.yaml` + `manuscript/preamble.md` + every `manuscript/*.bib`.
@@ -127,12 +127,12 @@ uv run python scripts/03_render_pdf.py --project template_search_project
 
 **Commands**:
 ```bash
-uv run python scripts/05_copy_outputs.py --project template_search_project
-uv run python projects/template_search_project/scripts/zz_generate_review_report.py
+uv run python scripts/05_copy_outputs.py --project templates/template_search_project
+uv run python projects/templates/template_search_project/scripts/zz_generate_review_report.py
 ```
 
 **Outputs**:
-- `output/template_search_project/template_search_project_combined.pdf` — the promoted artifact (used by CI artifact upload and the multi-project executive report).
+- `output/templates/template_search_project/template_search_project_combined.pdf` — the promoted artifact (used by CI artifact upload and the multi-project executive report).
 - `output/review/stage_*.json`, `output/review/summary.json` — per-stage review outputs from `scripts/review`.
 - `output/review/REVIEW_REPORT.md` — human-readable aggregation written by `zz_generate_review_report.py`.
 
@@ -184,9 +184,9 @@ The review CLI (`scripts/review`) reads `review_config.yaml` to enable / disable
 
 **Fix**:
 ```bash
-ls projects/template_search_project/output/data/manuscript_variables.json
-uv run python projects/template_search_project/scripts/z_generate_manuscript_variables.py
-grep -rn "{{[A-Z_]*}}" projects/template_search_project/output/manuscript/
+ls projects/templates/template_search_project/output/data/manuscript_variables.json
+uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
+grep -rn "{{[A-Z_]*}}" projects/templates/template_search_project/output/manuscript/
 ```
 
 ### Undefined citation key, but the key is in `references_deep.bib`
@@ -195,7 +195,7 @@ grep -rn "{{[A-Z_]*}}" projects/template_search_project/output/manuscript/
 
 **Cause**: `s_compose_literature_review.py` ran *after* `z_generate_manuscript_variables.py`, so `output/manuscript/references_deep.bib` is stale.
 
-**Fix**: Re-run the composer **before** the resolver, or run them in alphabetical script order via `./run.sh --project template_search_project --pipeline`. The pre-render gate unions every `manuscript/*.bib`; a missing or stale second file means deep-only keys fail.
+**Fix**: Re-run the composer **before** the resolver, or run them in alphabetical script order via `./run.sh --project templates/template_search_project --pipeline`. The pre-render gate unions every `manuscript/*.bib`; a missing or stale second file means deep-only keys fail.
 
 ### LLM stage produced no output
 
@@ -218,5 +218,5 @@ grep -rn "{{[A-Z_]*}}" projects/template_search_project/output/manuscript/
 **Cause / fix**: Phase 3 did not run, or `output/search/results.json` is absent (`y_generate_search_figures.py` exits 2 when there is no input). Run `run_search_pipeline.py` first.
 
 ```bash
-ls projects/template_search_project/output/figures/*.png
+ls projects/templates/template_search_project/output/figures/*.png
 ```

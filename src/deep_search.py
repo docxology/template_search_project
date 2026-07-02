@@ -518,7 +518,7 @@ def run_deep_search(
                 # produces the same artefact set without summaries.
                 try:
                     per_paper_summaries[paper.id] = llm(prompt)
-                except Exception as exc:  # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001 — safety net: isolate one paper's LLM failure
                     per_paper_failures.append(f"{paper.id}: {exc}")
 
         kw_dir = output_dir / slug if write_outputs else None

@@ -6,7 +6,7 @@ This document defines the coding and communication style for the `search_project
 
 ## 1. Zero-Mock Policy (and the LLM-as-Callable Corollary)
 
-The most critical style rule is the absolute prohibition of mocking. The following are **forbidden** anywhere inside `projects/template_search_project/tests/`:
+The most critical style rule is the absolute prohibition of mocking. The following are **forbidden** anywhere inside `projects/templates/template_search_project/tests/`:
 
 - `import unittest.mock`
 - `from unittest.mock import MagicMock, patch, create_autospec, Mock, AsyncMock`
@@ -39,7 +39,7 @@ assert "CONTRIBUTION:" in result.text
 
 **Verify cleanliness**:
 ```bash
-grep -rE "unittest\.mock|MagicMock|@patch" projects/template_search_project/tests/ || echo "Clean"
+grep -rE "unittest\.mock|MagicMock|@patch" projects/templates/template_search_project/tests/ || echo "Clean"
 ```
 
 ---
@@ -70,7 +70,7 @@ Project code delegates cross-cutting concerns to `infrastructure/`. Unlike `temp
 ```bash
 # src/ never imports from rendering / reporting / scientific
 grep -rE "from infrastructure\.(rendering|reporting|scientific)" \
-    projects/template_search_project/src/ || echo "Clean"
+    projects/templates/template_search_project/src/ || echo "Clean"
 ```
 
 ---
@@ -151,23 +151,23 @@ When AI agents or humans refer to files in logs, documentation, comments, or imp
 
 | Short Name | Absolute Path (from repo root) |
 |---|---|
-| project config | `projects/template_search_project/manuscript/config.yaml` |
-| typed config | `projects/template_search_project/src/config.py` |
-| standard pipeline | `projects/template_search_project/src/pipeline.py` |
-| deep search | `projects/template_search_project/src/deep_search.py` |
-| synthesis | `projects/template_search_project/src/synthesis.py` |
-| LLM runtime | `projects/template_search_project/src/llm_runtime.py` |
-| variables | `projects/template_search_project/src/manuscript_variables.py` |
-| review helpers | `projects/template_search_project/src/analysis.py` |
-| offline corpus | `projects/template_search_project/data/corpus.json` |
-| run script | `projects/template_search_project/scripts/run_search_pipeline.py` |
-| deep run script | `projects/template_search_project/scripts/run_deep_search.py` |
-| composer | `projects/template_search_project/scripts/s_compose_literature_review.py` |
-| review CLI | `projects/template_search_project/scripts/review` |
-| standard BibTeX | `projects/template_search_project/manuscript/references.bib` |
-| deep BibTeX | `projects/template_search_project/manuscript/references_deep.bib` |
-| working PDF | `projects/template_search_project/output/pdf/template_search_project_combined.pdf` |
-| promoted PDF | `output/template_search_project/template_search_project_combined.pdf` |
+| project config | `projects/templates/template_search_project/manuscript/config.yaml` |
+| typed config | `projects/templates/template_search_project/src/config.py` |
+| standard pipeline | `projects/templates/template_search_project/src/pipeline.py` |
+| deep search | `projects/templates/template_search_project/src/deep_search.py` |
+| synthesis | `projects/templates/template_search_project/src/synthesis.py` |
+| LLM runtime | `projects/templates/template_search_project/src/llm_runtime.py` |
+| variables | `projects/templates/template_search_project/src/manuscript_variables.py` |
+| review helpers | `projects/templates/template_search_project/src/analysis.py` |
+| offline corpus | `projects/templates/template_search_project/data/corpus.json` |
+| run script | `projects/templates/template_search_project/scripts/run_search_pipeline.py` |
+| deep run script | `projects/templates/template_search_project/scripts/run_deep_search.py` |
+| composer | `projects/templates/template_search_project/scripts/s_compose_literature_review.py` |
+| review CLI | `projects/templates/template_search_project/scripts/review` |
+| standard BibTeX | `projects/templates/template_search_project/manuscript/references.bib` |
+| deep BibTeX | `projects/templates/template_search_project/manuscript/references_deep.bib` |
+| working PDF | `projects/templates/template_search_project/output/pdf/template_search_project_combined.pdf` |
+| promoted PDF | `output/templates/template_search_project/template_search_project_combined.pdf` |
 
 ---
 

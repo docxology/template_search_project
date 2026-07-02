@@ -310,7 +310,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         for kr in artifacts.keyword_results:
             assert kr.output_dir is not None
@@ -321,7 +324,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         for kr in artifacts.keyword_results:
             assert kr.output_dir is not None
@@ -336,7 +342,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path, llm_per_paper=False)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         for kr in artifacts.keyword_results:
             assert kr.per_paper_summaries == {}
@@ -345,7 +354,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=None,
         )
         for kr in artifacts.keyword_results:
             assert kr.per_paper_summaries == {}
@@ -354,7 +366,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         assert artifacts.bibtex_path is not None
         db = parse_bibfile(artifacts.bibtex_path)
@@ -366,7 +381,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         keys = list(artifacts.aggregate_citation_keys.values())
         assert len(set(keys)) == len(keys)  # no duplicates
@@ -375,7 +393,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         text = artifacts.aggregate_report_path.read_text(encoding="utf-8")
         for kw in config.keywords:
@@ -402,6 +423,7 @@ class TestRunDeepSearch:
 
         class _Extra(SearchBackend):
             name = "extra"
+
             def search(self, query: SearchQuery) -> list[Paper]:
                 return [Paper(id=f"extra:{query.text}", title=f"Extra for {query.text}", year=2024)]
 
@@ -420,7 +442,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path, max_results_per_keyword=2)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         for kr in artifacts.keyword_results:
             assert len(kr.search_result.papers) <= 2
@@ -429,7 +454,10 @@ class TestRunDeepSearch:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path)
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=_deterministic_llm,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=_deterministic_llm,
         )
         payload = json.loads(artifacts.aggregate_json_path.read_text(encoding="utf-8"))
         assert payload["keywords"] == config.keywords
@@ -441,9 +469,7 @@ class TestPromptTemplate:
             assert placeholder in DEEP_PROMPT
 
     def test_template_formats(self):
-        out = DEEP_PROMPT.format(
-            keyword="convex", citation_key="x2024y", paper_block="content"
-        )
+        out = DEEP_PROMPT.format(keyword="convex", citation_key="x2024y", paper_block="content")
         assert "convex" in out
         assert "x2024y" in out
         assert "content" in out
@@ -520,7 +546,10 @@ class TestEnrichmentBranches:
             llm_per_paper=False,
         )
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=None,
         )
         # Both fetchers ran for at least one paper.
         kr = artifacts.keyword_results[0]
@@ -542,13 +571,19 @@ class TestDeepSearchDeterminism:
         corpus = _make_corpus(tmp_path)
         config = _config(tmp_path, llm_per_paper=False)
         first = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=None,
         )
         first_bib = first.bibtex_path.read_bytes()
         first_agg = first.aggregate_json_path.read_bytes()
 
         second = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus,
+            llm=None,
         )
         assert second.bibtex_path.read_bytes() == first_bib
         assert second.aggregate_json_path.read_bytes() == first_agg
@@ -574,10 +609,16 @@ class TestDeepSearchDeterminism:
             encoding="utf-8",
         )
         config = _config(
-            tmp_path, keywords=["paper"], llm_per_paper=False, max_results_per_keyword=10,
+            tmp_path,
+            keywords=["paper"],
+            llm_per_paper=False,
+            max_results_per_keyword=10,
         )
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus_path, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus_path,
+            llm=None,
         )
         # Bib parses cleanly even with the missing-year entry.
         db = parse_bibfile(artifacts.bibtex_path)
@@ -624,7 +665,10 @@ class TestStandardDeepParity:
             max_results_per_keyword=50,
         )
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus_path, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus_path,
+            llm=None,
         )
         keys = sorted(artifacts.aggregate_citation_keys.values())
         # All 30 keys are unique.
@@ -667,10 +711,16 @@ class TestAggregateCitationKeyCollision:
             encoding="utf-8",
         )
         config = _config(
-            tmp_path, keywords=["method"], llm_per_paper=False, max_results_per_keyword=10,
+            tmp_path,
+            keywords=["method"],
+            llm_per_paper=False,
+            max_results_per_keyword=10,
         )
         artifacts = run_deep_search(
-            config, project_root=tmp_path, corpus_path=corpus_path, llm=None,
+            config,
+            project_root=tmp_path,
+            corpus_path=corpus_path,
+            llm=None,
         )
         keys = sorted(artifacts.aggregate_citation_keys.values())
         # Both keys must be distinct, and the second must carry an alphabetic suffix.

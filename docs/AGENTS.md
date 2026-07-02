@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Project-local agent-facing documentation. This is the operational rulebook for AI agents and contributors working inside the literature-discovery exemplar. Repo-wide literature references live under [`docs/modules/`](../../../docs/modules/) and [`docs/guides/`](../../../docs/guides/); manuscript-syntax canon lives at [`docs/guides/manuscript-semantics.md`](../../../docs/guides/manuscript-semantics.md).
+Project-local agent-facing documentation. This is the operational rulebook for AI agents and contributors working inside the literature-discovery exemplar. Repo-wide literature references live under [`docs/modules/`](../../../../docs/modules/) and [`docs/guides/`](../../../../docs/guides/); manuscript-syntax canon lives at [`docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md).
 
 ## File Inventory
 
@@ -12,7 +12,7 @@ Project-local agent-facing documentation. This is the operational rulebook for A
 | [`AGENTS.md`](AGENTS.md) | This index |
 | [`agent_instructions.md`](agent_instructions.md) | Behavioural constraints for AI agents (read-first priority) — 7 rules + verification checklist |
 | [`architecture.md`](architecture.md) | Two-layer compliance, module-responsibilities table, idempotency contract |
-| [`testing_philosophy.md`](testing_philosophy.md) | Zero-mock + LLM-as-callable; 266 collected tests; ~99.5% coverage; 19 test files |
+| [`testing_philosophy.md`](testing_philosophy.md) | Zero-mock + LLM-as-callable; live counts in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md) |
 | [`rendering_pipeline.md`](rendering_pipeline.md) | Five-phase flow (search → compose → figures+vars → PDF → review); `config.yaml` controls; troubleshooting |
 | [`style_guide.md`](style_guide.md) | 7 rules: zero-mock, infrastructure delegation, thin orchestrator, show-not-tell, explicit paths, dataclass standards, error messages |
 | [`syntax_guide.md`](syntax_guide.md) | Pandoc-crossref labels, `{{TOKEN}}` registry from `src/manuscript_variables.py`, two-bibliography citation rule |
@@ -53,20 +53,20 @@ Run all four before submitting any change:
 
 ```bash
 # 1. Tests pass and coverage gate is met
-uv run pytest projects/template_search_project/tests/ \
-    --cov=projects/template_search_project/src \
+uv run pytest projects/templates/template_search_project/tests/ \
+    --cov=projects/templates/template_search_project/src \
     --cov-fail-under=90 -q
 
 # 2. No mocks anywhere in tests/
 grep -rE "unittest\.mock|MagicMock|@patch|create_autospec" \
-    projects/template_search_project/tests/ || echo "Clean"
+    projects/templates/template_search_project/tests/ || echo "Clean"
 
 # 3. src/ stays in its lane (no rendering/reporting/scientific imports)
 grep -rE "from infrastructure\.(rendering|reporting|scientific)" \
-    projects/template_search_project/src/ || echo "Clean"
+    projects/templates/template_search_project/src/ || echo "Clean"
 
 # 4. The configurable review CLI lists the nine stages
-cd projects/template_search_project && uv run python scripts/review --list
+cd projects/templates/template_search_project && uv run python scripts/review --list
 ```
 
 ## Contracts

@@ -37,7 +37,7 @@ Runtime callers pass the adapter built by `src/llm_runtime.py::build_llm_callabl
 
 ### How many tests, and what coverage?
 
-The suite collects **266 tests** (265 passed, 1 skipped) and reports approximately **99.50% line coverage** on `projects/template_search_project/src/`. The gate is 90%. See [`testing_philosophy.md`](testing_philosophy.md) for the file-by-file breakdown.
+Live counts are tracked in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md); the suite runs well above the 90% gate. See [`testing_philosophy.md`](testing_philosophy.md) for the file-by-file breakdown.
 
 ### How is the LLM tested without Ollama?
 
@@ -108,12 +108,12 @@ No code changes required. `tests/test_readme_config_consistency.py` ensures the 
 
 Working copy:
 ```
-projects/template_search_project/output/pdf/template_search_project_combined.pdf
+projects/templates/template_search_project/output/pdf/template_search_project_combined.pdf
 ```
 
 Promoted copy (used by CI artifact upload and the multi-project executive report):
 ```
-output/template_search_project/template_search_project_combined.pdf
+output/templates/template_search_project/template_search_project_combined.pdf
 ```
 
 ## Common Pitfalls

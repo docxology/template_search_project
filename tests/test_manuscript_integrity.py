@@ -21,7 +21,8 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-REPO_ROOT = PROJECT_ROOT.parent.parent
+# Project lives at projects/templates/<name>/; repo root is three levels up.
+REPO_ROOT = PROJECT_ROOT.parents[2]
 
 # Files that are documentation-of-syntax rather than rendered manuscript;
 # scanning them for citation correctness produces noise (e.g. SYNTAX.md
@@ -73,8 +74,7 @@ def test_every_crossref_has_matching_anchor() -> None:
     anchors = set(re.findall(r"\{#((?:sec|fig|tbl|eq|lst):[A-Za-z0-9_\-]+)\}", text))
     missing = sorted(refs - anchors)
     assert not missing, (
-        f"Pandoc-crossref references with no matching {{#anchor}}: {missing}.\n"
-        f"All anchors found: {sorted(anchors)}"
+        f"Pandoc-crossref references with no matching {{#anchor}}: {missing}.\nAll anchors found: {sorted(anchors)}"
     )
 
 
@@ -113,9 +113,7 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
 
     # Reuse the bundled corpus so the search returns real papers.
     bundled_corpus = PROJECT_ROOT / "data" / "corpus.json"
-    (iso / "data" / "corpus.json").write_text(
-        bundled_corpus.read_text(encoding="utf-8"), encoding="utf-8"
-    )
+    (iso / "data" / "corpus.json").write_text(bundled_corpus.read_text(encoding="utf-8"), encoding="utf-8")
 
     (iso / "manuscript" / "config.yaml").write_text(
         "paper:\n  title: 'X'\n"
@@ -140,12 +138,18 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
         [
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "run_deep_search.py"),
-            "--config", str(iso / "manuscript" / "config.yaml"),
-            "--project-root", str(iso),
-            "--enable", "--no-llm",
-            "--corpus", str(iso / "data" / "corpus.json"),
+            "--config",
+            str(iso / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(iso),
+            "--enable",
+            "--no-llm",
+            "--corpus",
+            str(iso / "data" / "corpus.json"),
         ],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 0, proc.stderr
 
@@ -154,10 +158,14 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
         [
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
-            "--config", str(iso / "manuscript" / "config.yaml"),
-            "--project-root", str(iso),
+            "--config",
+            str(iso / "manuscript" / "config.yaml"),
+            "--project-root",
+            str(iso),
         ],
-        cwd=REPO_ROOT, capture_output=True, text=True,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
     assert proc2.returncode == 0, proc2.stderr
 
@@ -204,10 +212,7 @@ def test_every_inserted_figure_has_prose_crossref() -> None:
         prose = re.sub(r"!\[[^\]]*\][^\n]*\n", "", text)
         prose_refs = set(re.findall(r"\[@(fig:[A-Za-z0-9_\-]+)\]", prose))
         missing = sorted(anchors - prose_refs)
-        assert not missing, (
-            f"{md.name}: figure anchor(s) without a prose [@fig:X] "
-            f"cross-ref: {missing}"
-        )
+        assert not missing, f"{md.name}: figure anchor(s) without a prose [@fig:X] cross-ref: {missing}"
 
 
 def test_every_disk_figure_is_inserted_in_manuscript() -> None:
@@ -218,10 +223,12 @@ def test_every_disk_figure_is_inserted_in_manuscript() -> None:
     fig_dir = PROJECT_ROOT / "output" / "figures"
     if not fig_dir.is_dir():
         import pytest as _pytest
+
         _pytest.skip("output/figures/ absent; run the analysis stage first")
     on_disk = sorted(p.name for p in fig_dir.glob("*.png"))
     if not on_disk:
         import pytest as _pytest
+
         _pytest.skip("no PNGs in output/figures/")
     inserted: set[str] = set()
     for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
@@ -256,10 +263,7 @@ def test_every_figure_caption_is_substantive() -> None:
             caption = re.sub(r"\s+", " ", m.group(1)).strip()
             if len(caption) < 30:
                 short_captions.append((md.name, m.group(2), caption))
-    assert not short_captions, (
-        f"Figures with under-substantive captions (<30 chars): "
-        f"{short_captions}"
-    )
+    assert not short_captions, f"Figures with under-substantive captions (<30 chars): {short_captions}"
 
 
 def test_table_anchors_are_unique_and_referenced() -> None:
@@ -356,12 +360,8 @@ def test_no_hardcoded_numeric_references() -> None:
             for pattern, rule in _HARDCODE_PATTERNS:
                 if re.search(pattern, line):
                     failures.append((md.name, line_no, rule, raw_line.strip()))
-    assert not failures, (
-        "Hard-coded numerical references found — replace with Pandoc-crossref:\n"
-        + "\n".join(
-            f"  {name}:{ln}  [{rule}]\n    {text}"
-            for name, ln, rule, text in failures
-        )
+    assert not failures, "Hard-coded numerical references found — replace with Pandoc-crossref:\n" + "\n".join(
+        f"  {name}:{ln}  [{rule}]\n    {text}" for name, ln, rule, text in failures
     )
 
 
@@ -375,6 +375,7 @@ def test_run_summary_records_real_llm_used_flag() -> None:
         # The pipeline may not have been run in this checkout; skip rather
         # than assert against a stale file.
         import pytest as _pytest
+
         _pytest.skip("output/run_summary.json absent; run the pipeline first")
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     # Bundled config has llm.enabled: false → llm_used must be False.

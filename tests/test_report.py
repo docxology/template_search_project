@@ -80,9 +80,7 @@ def test_report_includes_per_paper_when_provided(tmp_path: Path):
 def test_report_includes_corpus_synthesis(tmp_path: Path):
     result = _result_with_papers()
     keys = {p.id: p.id for p in result.papers}
-    synth = SynthesisResult(
-        kind="corpus", prompt="p", text="Cluster A: foo. Cluster B: bar."
-    )
+    synth = SynthesisResult(kind="corpus", prompt="p", text="Cluster A: foo. Cluster B: bar.")
     out = write_reading_report(
         tmp_path / "r.md",
         search_result=result,
