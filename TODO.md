@@ -11,7 +11,7 @@ Run from the template repository root:
 ```bash
 uv run pytest projects/templates/template_search_project/tests/ \
   --cov=projects/templates/template_search_project/src --cov-fail-under=90
-uv run python scripts/check_template_drift.py --strict --project templates/template_search_project
+uv run python scripts/audit/check_template_drift.py --strict --project templates/template_search_project
 uv run python -m infrastructure.validation.cli markdown projects/templates/template_search_project/manuscript/
 ```
 
@@ -24,7 +24,9 @@ file.
 - LLM synthesis (`llm.enabled`) defaults to `false` so tests and CI never
   require an Ollama server.
 - `deep_search` is enabled by default and exercises the multi-keyword
-  arXiv/Crossref/Paperclip fan-out with graceful per-backend degradation.
+  arXiv/Crossref fan-out. Paperclip is fail-fast (not graceful) when
+  `PAPERCLIP_API_KEY` is unset and is deliberately omitted from the default
+  `sources` list; add it only alongside a real key.
 
 ## Integrity and template-status gaps
 

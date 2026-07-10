@@ -3,18 +3,19 @@
   "@type": "SoftwareSourceCode",
   "author": [
     {
-      "@id": "https://orcid.org/0000-0000-0000-1234",
+      "@id": "https://orcid.org/0000-0001-6232-9096",
       "@type": "Person",
       "affiliation": {
         "@type": "Organization",
-        "name": "Research Template Institute"
+        "name": "Active Inference Institute"
       },
-      "familyName": "Author",
-      "givenName": "Research Template"
+      "familyName": "Friedman",
+      "givenName": "Daniel Ari"
     }
   ],
   "codeRepository": "https://github.com/docxology/template_search_project",
-  "dateModified": "2026-07-01",
+  "dateModified": "2026-07-10",
+  "identifier": "10.5281/zenodo.21298894",
   "keywords": [
     "literature search",
     "automated reference management",
