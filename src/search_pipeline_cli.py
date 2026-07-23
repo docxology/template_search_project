@@ -28,6 +28,8 @@ def run_search_pipeline_cli(
     args: argparse.Namespace,
     project_root: Path,
     config: ProjectConfig,
+    *,
+    llm_builder=build_llm_callable,
 ) -> int:
     """Run the search-pipeline CLI flow and return the process exit code."""
     logger.info("Running literature pipeline for query: %r", config.search.query)
@@ -64,7 +66,7 @@ def run_search_pipeline_cli(
     do_llm = config.llm.enabled and not args.no_llm
     llm = None
     if do_llm and artifacts.papers:
-        llm = build_llm_callable(
+        llm = llm_builder(
             model=config.llm.model,
             seed=config.llm.seed,
             temperature=config.llm.temperature,
@@ -105,6 +107,8 @@ def run_search_pipeline_cli(
         per_paper=per_paper_results if config.report.include_per_paper else (),
         corpus_synthesis=corpus_result if config.report.include_corpus_synthesis else None,
         title=config.title,
+        fixture_only=bool(config.search.sources)
+        and all(source.strip().lower() == "local" for source in config.search.sources),
     )
     print(str(report_path))
 
@@ -118,6 +122,11 @@ def run_search_pipeline_cli(
         "corpus": str(artifacts.corpus_path) if artifacts.corpus_path else None,
         "report": str(report_path),
         "llm_used": llm is not None,
+        "evidence_scope": (
+            "bundled_deterministic_fixture"
+            if config.search.sources and all(source.strip().lower() == "local" for source in config.search.sources)
+            else "provider_results"
+        ),
     }
     summary_path = (project_root / "output" / "run_summary.json").resolve()
     summary_path.parent.mkdir(parents=True, exist_ok=True)

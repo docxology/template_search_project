@@ -73,7 +73,10 @@ class LiteratureRunArtifacts:
 
     @property
     def papers(self) -> list[Paper]:
-        """Process papers."""
+        """Convenience accessor for ``self.result.papers`` as a plain list
+        (copies the underlying sequence so callers can't mutate the
+        wrapped :class:`SearchResult` in place).
+        """
         return list(self.result.papers)
 
 
@@ -157,7 +160,7 @@ def _build_backends(
     """Translate config sources → backend instances.
 
     *corpus_path* is required iff ``"local"`` is in ``config.search.sources``.
-    *extra_backends* are appended verbatim (used by tests to inject fakes).
+    *extra_backends* are appended verbatim (used by tests to inject stubs).
     """
     backends: list[SearchBackend] = []
     for source in config.search.sources:
@@ -200,7 +203,7 @@ def run_literature_pipeline(
             ``config.search.local_corpus`` (resolved against
             *project_root*) is used.
         extra_backends: Extra :class:`SearchBackend` instances appended after
-            the configured ones (tests inject fakes here).
+            the configured ones (tests inject stubs here).
         use_cache: Whether to read from the configured search cache. Writes
             still happen.
         write_outputs: When ``False``, skip writing the corpus and BibTeX

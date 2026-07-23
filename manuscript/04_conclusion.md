@@ -13,8 +13,13 @@ We close with three concrete extensions that build naturally on this foundation:
 
 1. **Crossref TDM full-text fetch** for non-arXiv DOIs, completing the abstract-to-fulltext picture without changing the project's API.
 2. **CSL-JSON export** alongside BibTeX, enabling Zotero / Mendeley / Pandoc-CSL workflows from the same `BibDatabase`.
-3. **Vector recall on `LocalBackend`** for curated corpora exceeding ~1000 papers, gated behind an optional dependency.
+3. **Vector recall on `LocalBackend`** for sufficiently large curated corpora, gated behind an optional dependency and an explicit benchmark-derived crossover threshold.
 
 The infrastructure modules are deliberately small and stable; the project that exercises them is deliberately small and explicit. Together they show that *domain-specific research automation* and *template-strict architectural discipline* are compatible — and, in fact, mutually reinforcing.
 
-The bundled `data/corpus.json` exercises classical optimisation references [@boyd2004convex; @nocedal2006numerical; @nesterov2013gradient] alongside modern stochastic-optimisation work [@kingma2014adam; @reddi2018convergence] and the canonical reproducibility paper [@peng2011reproducible], so the auto-generated `manuscript/references.bib` always contains real citation-ready entries that downstream tooling can resolve.
+The bundled `data/corpus.json` is a deterministic workflow fixture containing
+citation-shaped optimisation records [@boyd2004convex; @nocedal2006numerical;
+@nesterov2013gradient; @kingma2014adam; @reddi2018convergence;
+@peng2011reproducible]. It ensures that the auto-generated
+`manuscript/references.bib` contains citation-ready entries that downstream
+tooling can resolve; it does not establish empirical literature findings.

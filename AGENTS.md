@@ -94,7 +94,7 @@ flowchart TB
 | `python scripts/run_search_pipeline.py` | Default config, hits live arXiv + Crossref, runs LLM if Ollama is reachable, writes everything. |
 | `… --no-llm` | Skip the LLM stage; produce reading report without synthesis. |
 | `… --no-cache` | Bypass cache reads (writes still happen). |
-| `… --corpus path.json` | Required when `config.search.sources` includes `local`. |
+| `… --corpus path.json` | Required when `project_config.search.sources` includes `local`. |
 | `… --config other.yaml` | Use an alternative config file. |
 
 ### Deep search (`run_deep_search.py`)
@@ -108,7 +108,7 @@ See [`src/deep_search.py`](src/deep_search.py) and
 
 | Command | Behaviour |
 |---|---|
-| `python scripts/run_deep_search.py` | Honours `deep_search.enabled` in config; exits 2 if disabled. |
+| `python scripts/run_deep_search.py` | Honours `project_config.deep_search.enabled`; exits 2 if disabled. |
 | `… --enable` | Force-enable regardless of config. |
 | `… --keyword "X" --keyword "Y"` | Override the keyword list at the CLI. |
 | `… --no-llm` | Skip per-paper LLM summaries even when config enables them. |
@@ -122,7 +122,10 @@ uv run pytest projects/templates/template_search_project/tests/ -v
 ```
 
 All tests run offline: `LocalBackend` against real temp files,
-deterministic LLM callable, real subprocess where needed.
+deterministic LLM callable, real subprocess where needed. The committed
+`data/corpus.json` is a deterministic fixture, not empirical evidence; the
+standard report writes a fixture-scope notice and rejects high-confidence
+empirical assertion language in fixture-backed synthesis.
 
 ## How this project differs from `template_code_project`
 
@@ -140,8 +143,8 @@ deterministic LLM callable, real subprocess where needed.
 
 To target a different topic:
 
-1. Edit `manuscript/config.yaml` → `search.query`.
-2. Adjust `search.year_min` / `year_max` / `sources` as needed.
+1. Edit `manuscript/config.yaml` → `project_config.search.query`.
+2. Adjust `project_config.search.year_min` / `year_max` / `sources` as needed.
 3. Re-run `scripts/run_search_pipeline.py`.
 
 To swap LLM models:
@@ -152,7 +155,7 @@ To swap LLM models:
 To use only a curated corpus (offline reproducibility):
 
 1. Generate one once via `infrastructure.search.literature.write_corpus`.
-2. Set `search.sources: [local]` in `config.yaml`.
+2. Set `project_config.search.sources: [local]` in `config.yaml`.
 3. Pass `--corpus path/to/corpus.json` to the script.
 
 ## Review phase
@@ -191,6 +194,25 @@ Disable a stage with `enabled: false` in `review_config.yaml`.
 ### Custom stages
 
 Add `stage_type: custom` and wire the subprocess in `scripts/review` to `src.analysis` (see that file’s `run_custom_stage`).
+
+## Related Capabilities
+
+This project's full-text acquisition is the narrow `FulltextFetcher` in
+`infrastructure/search/literature/fulltext.py` — arXiv-derived or
+`paper.pdf_url` PDF download only, with no Unpaywall/OA resolution across
+arbitrary DOIs — and `src/` has no workflow-graph decomposition or composite
+reproducibility score over that text.
+[`template_literature_meta_analysis`](../template_literature_meta_analysis/)
+is a candidate pattern to adopt here if this project's acquisition step
+grows to match: its `src/literature/fulltext_download.py` resolves full text
+via Unpaywall/OA/direct-PDF with graceful degradation, feeding
+`src/reproducibility/` — an LLM-populated workflow-graph model (`models.py`)
+scored by a no-compensation composite (`scoring.py`: `R = sqrt(Rc * Rs)` over
+content and structural sub-scores). Porting the workflow-graph/scoring
+approach here would first require a comparable multi-source full-text
+resolver, since the sibling project's reproducibility runner assumes richer
+full-text coverage than a single-source arXiv fetch provides. Not planned
+work — noted for future reference only.
 
 ## See also
 
