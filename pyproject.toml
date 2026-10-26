@@ -39,8 +39,8 @@ dependencies = [
     "idna>=3.15",
     # `infrastructure/search/literature/backends.py` imports
     # `defusedxml.ElementTree` directly. Workspace mode picks it up
-    # transitively through `py-serializable`; project-local venvs (used
-    # by `execute_pipeline.py --core-only`) need it declared explicitly.
+    # transitively through `py-serializable`; project-local venvs need it
+    # declared explicitly.
     "defusedxml>=0.7,<1.0",
 ]
 

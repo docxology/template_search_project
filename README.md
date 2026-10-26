@@ -80,6 +80,13 @@ flowchart LR
 
 ## Quick start
 
+> **Path note.** The commands below use the monorepo-relative project path. In
+> the standalone clone (`docxology/template_search_project` — this repository)
+> the project root *is* the repository root, so drop the
+> `projects/templates/template_search_project/` prefix — e.g.
+> `uv run pytest tests/` and `uv run python scripts/run_search_pipeline.py`.
+> See [`STANDALONE.md`](STANDALONE.md).
+
 ```bash
 # ── Standard (single-query) pipeline ────────────────────────────────
 uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py
