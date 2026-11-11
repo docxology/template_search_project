@@ -84,3 +84,24 @@ No active rows are currently scoped at this size.
 
 Rows remain active until the acceptance command and negative control pass in the same source revision.
 A blocked row is a deliberate boundary, not a skipped success.
+
+## Workflowz review — 2026-11-10
+
+- [ ] **WF-20261110-001** · P1 · Standalone-clone `_repo_root` resolution in entry-point scripts
+
+  **Evidence:** `scripts/run_search_pipeline.py:28-33` and `scripts/run_deep_search.py:28-33` both compute `_repo_root = _project_root.parents[2]`, which assumes the project lives at `projects/templates/<name>/` inside a monorepo. In a standalone clone (where `_project_root` *is* the repository root, per `README.md:83-87` and `pyproject.toml:12-15`), `parents[2]` resolves to an unrelated directory (potentially `/`), inserting a wrong path into `sys.path` and breaking `infrastructure.*` imports.
+
+  **Observable outcome:** Running `python scripts/run_search_pipeline.py --no-llm` from a standalone clone with `infrastructure/` as a sibling directory completes the pipeline (or fails with a clear "infrastructure not found" message), rather than producing an opaque ImportError caused by `sys.path` containing `/` or another unrelated directory.
+
+  **Acceptance probe (from repo root):** Create a temporary standalone layout by copying the project to a flat directory with a sibling `infrastructure/` directory, then run:
+  ```bash
+  cp -r . /tmp/standalone_test/template_search_project
+  cp -r ../infrastructure /tmp/standalone_test/infrastructure  # if available
+  cd /tmp/standalone_test/template_search_project
+  python scripts/run_search_pipeline.py --no-llm 2>&1 | head -20
+  ```
+  The command should not produce `ModuleNotFoundError: No module named 'infrastructure'` caused by incorrect `sys.path` entries. If `infrastructure/` is missing, the error message should clearly indicate where it was looked for.
+
+  **Dependencies/constraints:** Must preserve monorepo behavior (the common case per `pyproject.toml:5-10`). Fix should detect whether `infrastructure/` exists at the computed `_repo_root` and, if not, check the project root's parent (sibling layout) or skip insertion. Do not change the public CLI interface or add new required arguments.
+
+  **Negative control:** Verify that in monorepo layout (`projects/templates/template_search_project/`), the existing `_repo_root` computation still works — run `python scripts/run_search_pipeline.py --help` from the monorepo project root and confirm exit code 0.
