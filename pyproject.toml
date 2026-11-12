@@ -28,7 +28,7 @@ description = "Configurable literature-search → BibTeX → LLM-synthesis pipel
 authors = [{name = "Daniel Ari Friedman", email = "daniel@activeinference.institute"}]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 # Runtime dependencies for the *project-local* code in `src/`.
 # `infrastructure.*` is intentionally NOT listed (see header note).
