@@ -148,7 +148,7 @@ class TestYearBackfillContract:
     Investigation summary
     ---------------------
 
-    The 4 entries in ``manuscript/references_deep.bib`` that render as
+    The 4 entries in ``docs/manuscript/references_deep.bib`` that render as
     ``(n.d.)`` are SPIE-International Society for Optical Engineering
     proceedings figures and a Springer reference whose Crossref payload
     contains *no* ``issued`` / ``published-print`` / ``published-online``
@@ -384,8 +384,8 @@ class TestDeterminismEmptyCache:
         (out / "search" / "cache").mkdir(parents=True)
         # No *.json files inside the cache dir on purpose.
         (out / "run_summary.json").write_text("{}", encoding="utf-8")
-        mdir = tmp_path / "manuscript"
-        mdir.mkdir()
+        mdir = tmp_path / "docs" / "manuscript"
+        mdir.mkdir(parents=True)
         (mdir / "config.yaml").write_text("llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8")
         res = check_determinism_artifacts(tmp_path)
         assert res.status == "failed"
@@ -406,8 +406,8 @@ class TestDeterminismSeedMissing:
         (out / "search" / "cache").mkdir(parents=True)
         (out / "search" / "cache" / "x.json").write_text("{}", encoding="utf-8")
         (out / "run_summary.json").write_text("{}", encoding="utf-8")
-        mdir = tmp_path / "manuscript"
-        mdir.mkdir()
+        mdir = tmp_path / "docs" / "manuscript"
+        mdir.mkdir(parents=True)
         # llm block present but no `seed` key.
         (mdir / "config.yaml").write_text("llm:\n  temperature: 0\n", encoding="utf-8")
         res = check_determinism_artifacts(tmp_path)
@@ -425,7 +425,7 @@ class TestDeterminismSeedMissing:
         (out / "search" / "cache").mkdir(parents=True)
         (out / "search" / "cache" / "x.json").write_text("{}", encoding="utf-8")
         (out / "run_summary.json").write_text("{}", encoding="utf-8")
-        # No manuscript/config.yaml on purpose.
+        # No docs/manuscript/config.yaml on purpose.
         res = check_determinism_artifacts(tmp_path)
         assert res.status == "passed"
         # findings dict should not contain llm_seed / llm_temperature
@@ -515,8 +515,8 @@ class TestAnalysisCLIInProcess:
     def test_cli_bibliography_completeness_pass(self, tmp_path: Path) -> None:
         from src import analysis
 
-        md = tmp_path / "manuscript"
-        md.mkdir()
+        md = tmp_path / "docs" / "manuscript"
+        md.mkdir(parents=True)
         (md / "references.bib").write_text("@article{k1,\n title={x}\n}\n", encoding="utf-8")
         (md / "01_intro.md").write_text("Cite [@k1].", encoding="utf-8")
         argv = [

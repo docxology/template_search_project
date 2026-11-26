@@ -10,8 +10,8 @@ truth for that mapping.
 flowchart TB
     P["projects/templates/template_search_project/"]
     P --> DAT["data/<br/>committed"]
-    P --> MAN["manuscript/"]
-    P --> OUT["output/<br/>regeneratable · gitignored"]
+    P --> MAN["docs/manuscript/"]
+    P --> OUT["output/<br/>generated · published snapshot tracked"]
 
     DAT --> CORP_IN[corpus.json<br/>offline default corpus]
 
@@ -74,12 +74,12 @@ flowchart TB
 | `output/cache/abs/*.txt` | `infrastructure.search.literature.AbstractFetcher` | re-runs of the same fetcher |
 | `output/cache/pdf/*.{pdf,txt}` | `infrastructure.search.literature.FulltextFetcher` | re-runs of the same fetcher; LLM prompts |
 | `output/corpus.json` | `run_search_pipeline.py` (`write_corpus`) | future `LocalBackend` runs; archival |
-| `manuscript/references.bib` | `run_search_pipeline.py` | Combined PDF (Pandoc `--natbib` + BibTeX; merged with other `manuscript/*.bib`) |
-| `manuscript/references_deep.bib` | `run_deep_search.py` | Same; supplemental [`S01_literature_review.md`](../manuscript/S01_literature_review.md) |
+| `docs/manuscript/references.bib` | `run_search_pipeline.py` | Combined PDF (Pandoc `--natbib` + BibTeX; merged with other `docs/manuscript/*.bib`) |
+| `docs/manuscript/references_deep.bib` | `run_deep_search.py` | Same; supplemental [`S01_literature_review.md`](manuscript/S01_literature_review.md) |
 | `output/enrichment_log.json` | `run_search_pipeline.py` (via `pipeline._serialise_enrichment_log`) | debugging only |
 | `output/figures/*.png` | `y_generate_search_figures.py` | manuscript via `infrastructure.documentation.FigureManager` |
 | `output/data/manuscript_variables.json` | `z_generate_manuscript_variables.py` | debugging / tooling; same run fills `output/manuscript/` |
-| `output/manuscript/*` | `z_generate_manuscript_variables.py` | PDF-rendering stage (preferred manuscript root when `*.md` present); resolved `{{…}}` text, copied `config.yaml` and `manuscript/*.bib` |
+| `output/manuscript/*` | `z_generate_manuscript_variables.py` | PDF-rendering stage (preferred manuscript root when `*.md` present); resolved `{{…}}` text, copied `config.yaml` and `docs/manuscript/*.bib` |
 | `output/llm/per_paper/*.md` | `run_search_pipeline.py` (LLM stage) | reading report assembly |
 | `output/llm/synthesis.md` | `run_search_pipeline.py` (LLM stage) | reading report assembly |
 | `output/reading_report.md` | `run_search_pipeline.py` | humans |
@@ -91,7 +91,7 @@ flowchart TB
 | `output/deep_search/<keyword_slug>/reading_report.md` | `run_deep_search.py` | humans |
 | `output/deep_search/<keyword_slug>/per_paper/<safe_id>.md` | `run_deep_search.py` (LLM stage) | `s_compose_literature_review.py` (extracts Contribution / Significance) |
 | `output/deep_search/composition_summary.json` | `s_compose_literature_review.py` | downstream tooling |
-| `manuscript/S01_literature_review.md` | `s_compose_literature_review.py` | combined PDF stage |
+| `docs/manuscript/S01_literature_review.md` | `s_compose_literature_review.py` | combined PDF stage |
 | `output/review/stage_*.json` + `summary.json` | `scripts/review` | humans, CI dashboards |
 
 ## Conventions
@@ -108,3 +108,7 @@ flowchart TB
 * **`<safe_id>` derivation.** `re.sub(r"[^A-Za-z0-9._-]", "_", paper.id)`,
   identical across `AbstractFetcher`, `FulltextFetcher`, and
   `run_search_pipeline.py`.
+
+The tracked `output/` tree is the published snapshot. Keep it separate
+from maintained source and regenerate only in a worktree when verifying a
+layout change. See the [offline quickstart](quickstart.md).

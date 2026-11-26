@@ -15,7 +15,7 @@ BUNDLED_CORPUS = PROJECT_ROOT / "data" / "corpus.json"
 
 def _args(**overrides) -> argparse.Namespace:
     defaults = dict(
-        config="manuscript/config.yaml",
+        config="docs/manuscript/config.yaml",
         project_root=".",
         no_llm=True,
         no_cache=False,
@@ -39,7 +39,7 @@ def _make_config(*, enabled: bool, keywords: list[str] | None = None) -> Project
             fetch_fulltext=False,
             output_dir="output/deep_search",
             search_cache_dir="output/cache/search",
-            unified_bibtex_path="manuscript/refs.bib",
+            unified_bibtex_path="docs/manuscript/refs.bib",
         ),
     )
 
@@ -61,7 +61,7 @@ def test_enabled_but_no_keywords_exits_zero(tmp_path: Path):
 
 
 def test_enabled_with_corpus_writes_artifacts(tmp_path: Path, capsys):
-    (tmp_path / "manuscript").mkdir()
+    (tmp_path / "docs" / "manuscript").mkdir(parents=True)
     (tmp_path / "data").mkdir()
     corpus = tmp_path / "data" / "corpus.json"
     corpus.write_text(BUNDLED_CORPUS.read_text(encoding="utf-8"), encoding="utf-8")
@@ -72,7 +72,7 @@ def test_enabled_with_corpus_writes_artifacts(tmp_path: Path, capsys):
     assert exit_code == 0
 
     assert (tmp_path / "output" / "deep_search" / "convex" / "papers.json").exists()
-    assert (tmp_path / "manuscript" / "refs.bib").exists()
+    assert (tmp_path / "docs" / "manuscript" / "refs.bib").exists()
     summary_path = tmp_path / "output" / "deep_search" / "run_summary.json"
     assert summary_path.exists()
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -84,7 +84,7 @@ def test_enabled_with_corpus_writes_artifacts(tmp_path: Path, capsys):
 
 
 def test_cli_keyword_override_replaces_config_keywords(tmp_path: Path):
-    (tmp_path / "manuscript").mkdir()
+    (tmp_path / "docs" / "manuscript").mkdir(parents=True)
     (tmp_path / "data").mkdir()
     corpus = tmp_path / "data" / "corpus.json"
     corpus.write_text(BUNDLED_CORPUS.read_text(encoding="utf-8"), encoding="utf-8")

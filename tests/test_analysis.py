@@ -27,15 +27,15 @@ def test_stage_result_as_dict() -> None:
 
 
 def test_validate_bibliography_completeness_missing_bib(tmp_path: Path) -> None:
-    (tmp_path / "manuscript").mkdir()
+    (tmp_path / "docs" / "manuscript").mkdir(parents=True)
     res = validate_bibliography_completeness(tmp_path)
     assert res.exit_code == 2
     assert res.status == "error"
 
 
 def test_validate_bibliography_completeness_pass(tmp_path: Path) -> None:
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{k1,\n title={x}\n}\n", encoding="utf-8")
     (md / "01_intro.md").write_text("Ref [@k1].", encoding="utf-8")
     res = validate_bibliography_completeness(tmp_path)
@@ -44,8 +44,8 @@ def test_validate_bibliography_completeness_pass(tmp_path: Path) -> None:
 
 
 def test_validate_bibliography_completeness_missing_key(tmp_path: Path) -> None:
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{k1,\n title={x}\n}\n", encoding="utf-8")
     (md / "01_intro.md").write_text("Missing [@ghost].", encoding="utf-8")
     res = validate_bibliography_completeness(tmp_path)
@@ -54,8 +54,8 @@ def test_validate_bibliography_completeness_missing_key(tmp_path: Path) -> None:
 
 
 def test_validate_bibliography_completeness_key_in_second_bib(tmp_path: Path) -> None:
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{k1,\n title={x}\n}\n", encoding="utf-8")
     (md / "references_deep.bib").write_text("@article{deep1,\n title={y}\n}\n", encoding="utf-8")
     (md / "01_intro.md").write_text("Ref [@k1] and [@deep1].", encoding="utf-8")
@@ -65,8 +65,8 @@ def test_validate_bibliography_completeness_key_in_second_bib(tmp_path: Path) ->
 
 
 def test_validate_variables_resolved_pass(tmp_path: Path) -> None:
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "body.md").write_text("No templates here.", encoding="utf-8")
     res = validate_variables_resolved(tmp_path)
     assert res.status == "passed"
@@ -83,8 +83,8 @@ def test_validate_variables_resolved_fail(tmp_path: Path) -> None:
 
 def test_validate_variables_resolved_prefers_output_manuscript(tmp_path: Path) -> None:
     """Templates under manuscript/ may keep placeholders; resolved tree must be clean."""
-    src = tmp_path / "manuscript"
-    src.mkdir()
+    src = tmp_path / "docs" / "manuscript"
+    src.mkdir(parents=True)
     (src / "body.md").write_text("Keep {{TOKEN}} here.", encoding="utf-8")
     out_m = tmp_path / "output" / "manuscript"
     out_m.mkdir(parents=True)
@@ -106,8 +106,8 @@ def test_check_determinism_artifacts_pass(tmp_path: Path) -> None:
     # ``run_search_pipeline.py`` writes ``papers`` (not ``num_papers``).
     # The check must read the field the pipeline actually writes.
     (out / "run_summary.json").write_text('{"papers": 3}', encoding="utf-8")
-    mdir = tmp_path / "manuscript"
-    mdir.mkdir()
+    mdir = tmp_path / "docs" / "manuscript"
+    mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text(
         "llm:\n  seed: 42\n  temperature: 0\n",
         encoding="utf-8",
@@ -126,8 +126,8 @@ def test_check_determinism_artifacts_reads_total_papers(tmp_path: Path) -> None:
     (out / "search" / "cache").mkdir(parents=True)
     (out / "search" / "cache" / "x.json").write_text("{}", encoding="utf-8")
     (out / "run_summary.json").write_text('{"total_papers": 17}', encoding="utf-8")
-    mdir = tmp_path / "manuscript"
-    mdir.mkdir()
+    mdir = tmp_path / "docs" / "manuscript"
+    mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text("llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8")
     res = check_determinism_artifacts(tmp_path)
     assert res.status == "passed"
@@ -138,8 +138,8 @@ def test_check_determinism_artifacts_missing_run_summary(tmp_path: Path) -> None
     out = tmp_path / "output"
     (out / "search" / "cache").mkdir(parents=True)
     (out / "search" / "cache" / "x.json").write_text("{}", encoding="utf-8")
-    mdir = tmp_path / "manuscript"
-    mdir.mkdir()
+    mdir = tmp_path / "docs" / "manuscript"
+    mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text(
         "llm:\n  seed: 1\n  temperature: 0\n",
         encoding="utf-8",
@@ -154,8 +154,8 @@ def test_check_determinism_artifacts_temperature_high(tmp_path: Path) -> None:
     (out / "search" / "cache").mkdir(parents=True)
     (out / "search" / "cache" / "x.json").write_text("{}", encoding="utf-8")
     (out / "run_summary.json").write_text("{}", encoding="utf-8")
-    mdir = tmp_path / "manuscript"
-    mdir.mkdir()
+    mdir = tmp_path / "docs" / "manuscript"
+    mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text(
         "llm:\n  seed: 1\n  temperature: 0.9\n",
         encoding="utf-8",
@@ -214,11 +214,11 @@ def test_run_project_tests_fail_when_pytest_errors(tmp_path: Path) -> None:
 def test_analysis_cli_infrastructure_usage(tmp_path: Path) -> None:
     """CLI dispatch covers the infrastructure_usage stage."""
     src = tmp_path / "src"
-    src.mkdir()
+    src.mkdir(parents=True)
     (src / "__init__.py").write_text(
         "from infrastructure.search.literature import Paper  # noqa: F401\n", encoding="utf-8"
     )
-    (tmp_path / "manuscript").mkdir()
+    (tmp_path / "docs" / "manuscript").mkdir(parents=True)
     # Project lives at projects/templates/<name>/; repo root is three levels up.
     repo_root = PROJECT_ROOT.parents[2]
     proc = subprocess.run(
@@ -286,7 +286,7 @@ def test_analysis_cli_test_suite_health_missing_tests(tmp_path: Path) -> None:
 def test_audit_infrastructure_imports_flags_missing_module(tmp_path: Path) -> None:
     """A non-existent infrastructure import is reported as an issue."""
     src = tmp_path / "src"
-    src.mkdir()
+    src.mkdir(parents=True)
     (src / "bad.py").write_text(
         "from infrastructure.this_module_definitely_does_not_exist import Foo\n",
         encoding="utf-8",
@@ -301,7 +301,7 @@ def test_audit_infrastructure_imports_flags_missing_module(tmp_path: Path) -> No
 def test_audit_infrastructure_imports_skips_private_modules(tmp_path: Path) -> None:
     """Private helpers (leading underscore) are excluded from the audit."""
     src = tmp_path / "src"
-    src.mkdir()
+    src.mkdir(parents=True)
     (src / "_helpers.py").write_text("from infrastructure.never.never import x\n", encoding="utf-8")
     res = audit_infrastructure_imports(tmp_path)
     assert res.status == "passed", res.details
@@ -311,7 +311,7 @@ def test_audit_infrastructure_imports_reports_syntax_error(tmp_path: Path) -> No
     """A file with a SyntaxError must surface in the issues list and the
     rest of the audit must continue rather than abort."""
     src = tmp_path / "src"
-    src.mkdir()
+    src.mkdir(parents=True)
     (src / "broken.py").write_text("def bad(:\n    pass\n", encoding="utf-8")
     (src / "ok.py").write_text(
         "from infrastructure.search.literature import Paper  # noqa: F401\n",
@@ -370,8 +370,8 @@ def test_extract_citation_keys_handles_multicite_and_crossref() -> None:
 def test_validate_bibliography_completeness_handles_multicite(tmp_path: Path) -> None:
     """A multi-cite ``[@a; @b]`` must resolve every key, not be treated
     as a single composite key."""
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text(
         "@article{a,\n title={A}\n}\n@article{b,\n title={B}\n}\n",
         encoding="utf-8",
@@ -385,8 +385,8 @@ def test_validate_bibliography_completeness_handles_multicite(tmp_path: Path) ->
 def test_validate_bibliography_completeness_excludes_crossref_labels(tmp_path: Path) -> None:
     """``[@sec:foo]`` etc. are pandoc-crossref refs, not BibTeX keys —
     they must not be reported as missing."""
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{k,\n title={x}\n}\n", encoding="utf-8")
     (md / "01_intro.md").write_text(
         "See [@sec:methodology], [@fig:foo], [@tbl:t1] and the real cite [@k].",
@@ -402,8 +402,8 @@ def test_validate_bibliography_completeness_excludes_crossref_labels(tmp_path: P
 def test_validate_bibliography_completeness_skips_doc_files(tmp_path: Path) -> None:
     """``SYNTAX.md`` / ``AGENTS.md`` / ``README.md`` carry illustrative
     ``[@key]`` examples that must not be treated as real citations."""
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{real,\n title={x}\n}\n", encoding="utf-8")
     (md / "01_intro.md").write_text("Use [@real].", encoding="utf-8")
     (md / "SYNTAX.md").write_text("Example syntax: [@key].", encoding="utf-8")
@@ -416,8 +416,8 @@ def test_validate_bibliography_completeness_skips_doc_files(tmp_path: Path) -> N
 def test_validate_bibliography_completeness_skips_references_section(tmp_path: Path) -> None:
     """References-section markdown (`99_*`) is intentionally skipped — those
     files reference every key by design and would always trip the check."""
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{k1,\n title={x}\n}\n", encoding="utf-8")
     # Body cites k1 → present in bib.
     (md / "01_intro.md").write_text("Body cites [@k1].", encoding="utf-8")
@@ -434,8 +434,8 @@ def test_check_determinism_missing_search_cache_dir(tmp_path: Path) -> None:
     out = tmp_path / "output"
     out.mkdir()
     (out / "run_summary.json").write_text("{}", encoding="utf-8")
-    mdir = tmp_path / "manuscript"
-    mdir.mkdir()
+    mdir = tmp_path / "docs" / "manuscript"
+    mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text("llm:\n  seed: 1\n  temperature: 0\n", encoding="utf-8")
     res = check_determinism_artifacts(tmp_path)
     assert res.status == "failed"
@@ -448,8 +448,8 @@ def test_check_determinism_temperature_missing(tmp_path: Path) -> None:
     (out / "search" / "cache").mkdir(parents=True)
     (out / "search" / "cache" / "x.json").write_text("{}", encoding="utf-8")
     (out / "run_summary.json").write_text("{}", encoding="utf-8")
-    mdir = tmp_path / "manuscript"
-    mdir.mkdir()
+    mdir = tmp_path / "docs" / "manuscript"
+    mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text(
         # temperature absent on purpose
         "llm:\n  seed: 1\n",
@@ -461,8 +461,8 @@ def test_check_determinism_temperature_missing(tmp_path: Path) -> None:
 
 
 def test_analysis_cli_bibliography_completeness(tmp_path: Path) -> None:
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "references.bib").write_text("@article{a,\ntitle={t}\n}\n", encoding="utf-8")
     (md / "x.md").write_text("", encoding="utf-8")
     # Project lives at projects/templates/<name>/; repo root is three levels up.
@@ -486,8 +486,8 @@ def test_analysis_cli_bibliography_completeness(tmp_path: Path) -> None:
 
 
 def test_analysis_cli_variables_resolved(tmp_path: Path) -> None:
-    md = tmp_path / "manuscript"
-    md.mkdir()
+    md = tmp_path / "docs" / "manuscript"
+    md.mkdir(parents=True)
     (md / "x.md").write_text("{{BAD}}", encoding="utf-8")
     # Project lives at projects/templates/<name>/; repo root is three levels up.
     repo_root = PROJECT_ROOT.parents[2]

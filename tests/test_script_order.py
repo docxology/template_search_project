@@ -5,7 +5,7 @@ literature-review composer (``s_compose_literature_review.py``) MUST run
 *before* the manuscript resolver (``z_generate_manuscript_variables.py``)
 so that ``output/manuscript/S01_literature_review.md`` always reflects
 the freshly composed S01 — and never references citation keys absent
-from the regenerated ``manuscript/references_deep.bib``.
+from the regenerated ``docs/manuscript/references_deep.bib``.
 
 These tests are pure-stdlib subprocess runs against an isolated project
 root; they do not touch the network and they do not mock anything.
@@ -61,11 +61,11 @@ def _seed_project(tmp_path: Path) -> Path:
     ``output/manuscript/S01_literature_review.md`` referencing a citation key
     that does NOT appear in the freshly written ``references_deep.bib``."""
     iso = tmp_path / "iso"
-    (iso / "manuscript").mkdir(parents=True)
+    (iso / "docs" / "manuscript").mkdir(parents=True)
     (iso / "output" / "manuscript").mkdir(parents=True)
     (iso / "output" / "deep_search" / "convex" / "per_paper").mkdir(parents=True)
 
-    (iso / "manuscript" / "config.yaml").write_text(
+    (iso / "docs" / "manuscript" / "config.yaml").write_text(
         "paper:\n  title: 'X'\n"
         "search:\n  query: 'x'\n"
         "deep_search:\n"
@@ -73,7 +73,7 @@ def _seed_project(tmp_path: Path) -> Path:
         "  keywords: ['convex']\n"
         "  max_results_per_keyword: 1\n"
         "  output_dir: 'output/deep_search'\n"
-        "  unified_bibtex_path: 'manuscript/references_deep.bib'\n",
+        "  unified_bibtex_path: 'docs/manuscript/references_deep.bib'\n",
         encoding="utf-8",
     )
 
@@ -102,7 +102,7 @@ def _seed_project(tmp_path: Path) -> Path:
         ),
         encoding="utf-8",
     )
-    (iso / "manuscript" / "references_deep.bib").write_text(
+    (iso / "docs" / "manuscript" / "references_deep.bib").write_text(
         "@article{alice2020convexity,\n  title={On Convexity},\n  author={Alice},\n  year={2020},\n  doi={10.1/x}\n}\n",
         encoding="utf-8",
     )
@@ -126,7 +126,7 @@ def test_composer_overwrites_stale_output_manuscript_copy(tmp_path: Path) -> Non
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
             "--config",
-            str(iso / "manuscript" / "config.yaml"),
+            str(iso / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(iso),
         ],
@@ -136,7 +136,7 @@ def test_composer_overwrites_stale_output_manuscript_copy(tmp_path: Path) -> Non
     )
     assert proc.returncode == 0, proc.stderr
 
-    canonical = (iso / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
+    canonical = (iso / "docs" / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
     mirrored = (iso / "output" / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
 
     # The freshly composed canonical S01 must reference the LIVE citation key
@@ -166,7 +166,7 @@ def test_resolver_then_composer_ordering_breaks_invariant(tmp_path: Path) -> Non
     # output/manuscript/. The fresh manuscript/S01 doesn't exist yet so
     # we create a placeholder that mimics the prior-run S01.
     stale_manuscript_s01 = "STALE manuscript copy — references [@ghost_legacy_key].\n"
-    (iso / "manuscript" / "S01_literature_review.md").write_text(stale_manuscript_s01, encoding="utf-8")
+    (iso / "docs" / "manuscript" / "S01_literature_review.md").write_text(stale_manuscript_s01, encoding="utf-8")
     # Resolver-style copy:
     (iso / "output" / "manuscript" / "S01_literature_review.md").write_text(stale_manuscript_s01, encoding="utf-8")
 
@@ -176,7 +176,7 @@ def test_resolver_then_composer_ordering_breaks_invariant(tmp_path: Path) -> Non
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
             "--config",
-            str(iso / "manuscript" / "config.yaml"),
+            str(iso / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(iso),
         ],
@@ -199,7 +199,7 @@ def test_full_two_step_chain_keeps_output_in_sync(tmp_path: Path) -> None:
     """End-to-end: composer → resolver, in the documented order.
 
     The resolver overwrites every ``output/manuscript/*.md`` with a
-    substituted copy of ``manuscript/*.md``, so the post-resolver
+    substituted copy of ``docs/manuscript/*.md``, so the post-resolver
     output/manuscript/S01 must still match the post-composer manuscript/S01.
     """
     iso = _seed_project(tmp_path)
@@ -226,7 +226,7 @@ def test_full_two_step_chain_keeps_output_in_sync(tmp_path: Path) -> None:
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
             "--config",
-            str(iso / "manuscript" / "config.yaml"),
+            str(iso / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(iso),
         ],

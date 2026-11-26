@@ -11,7 +11,7 @@ Usage:
 
     uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py
     uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py \
-        --config projects/templates/template_search_project/manuscript/config.yaml \
+        --config projects/templates/template_search_project/docs/manuscript/config.yaml \
         --no-llm
 
 Environment:
@@ -46,8 +46,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "--config",
-        default=str(_project_root / "manuscript" / "config.yaml"),
-        help="Path to manuscript/config.yaml",
+        default=str(_project_root / "docs" / "manuscript" / "config.yaml"),
+        help="Path to docs/manuscript/config.yaml",
     )
     parser.add_argument(
         "--project-root",

@@ -27,9 +27,10 @@ import sys
 from pathlib import Path
 
 _project_root = Path(__file__).resolve().parent.parent
+_repo_root = _project_root.parents[2]
 sys.path.insert(0, str(_project_root))          # project root for src/ imports
 sys.path.insert(0, str(_project_root / "src"))
-sys.path.insert(0, str(_project_root.parent.parent))  # template/ root for infrastructure/
+sys.path.insert(0, str(_repo_root))  # template/ root for infrastructure/
 
 
 def load_config(project_root: Path) -> dict:
@@ -61,11 +62,8 @@ def run_infra_stage(name: str, module: str, command: str, args: list[str], cwd: 
 
 def _subprocess_env(base_env: dict | None = None) -> dict:
     env = dict(base_env or os.environ)
-    # Ensure template/ root is on PYTHONPATH so `infrastructure/` resolves
-    # __file__ is projects/<name>/scripts/review; template/ is 3 parents up
-    template_root = str(Path(__file__).resolve().parents[3])  # projects/<name>/scripts/review → template/
-    p = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = template_root + (":" + p if p else "")
+    inherited = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = str(_repo_root) + (os.pathsep + inherited if inherited else "")
     return env
 
 
@@ -73,8 +71,6 @@ def run_custom_stage(name: str, cwd: Path) -> dict:
     """Invoke src.analysis module as a subprocess with --stage."""
     cmd = [sys.executable, "-m", "src.analysis", "--stage", name, "--project-root", str(cwd)]
     env = _subprocess_env()
-    # DEBUG: log env PYTHONPATH
-    print(f"[DEBUG] PYTHONPATH for subprocess: {env.get('PYTHONPATH')}", file=sys.stderr)
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd, env=env)
     parsed: dict = {}
     if result.returncode in (0, 1) and result.stdout.strip():

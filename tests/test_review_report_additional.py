@@ -159,13 +159,13 @@ def _make_project(tmp_path: Path) -> Path:
     (project_root / "README.md").write_text("# Project\n\n## Purpose\n\nStuff.\n", encoding="utf-8")
 
     # Manuscript
-    (project_root / "manuscript").mkdir()
-    (project_root / "manuscript" / "references.bib").write_text(
+    (project_root / "docs" / "manuscript").mkdir(parents=True)
+    (project_root / "docs" / "manuscript" / "references.bib").write_text(
         "@article{a2020,\n  title={T},\n}\n@article{b2021,\n  title={U},\n}\n",
         encoding="utf-8",
     )
-    (project_root / "manuscript" / "01_intro.md").write_text("Intro citing [@a2020] and [@b2021].\n", encoding="utf-8")
-    (project_root / "manuscript" / "99_references.md").write_text("See bib.\n", encoding="utf-8")
+    (project_root / "docs" / "manuscript" / "01_intro.md").write_text("Intro citing [@a2020] and [@b2021].\n", encoding="utf-8")
+    (project_root / "docs" / "manuscript" / "99_references.md").write_text("See bib.\n", encoding="utf-8")
 
     # src/ with a real infrastructure import
     src_dir = project_root / "src"

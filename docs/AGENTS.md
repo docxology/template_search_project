@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Project-local agent-facing documentation. This is the operational rulebook for AI agents and contributors working inside the literature-discovery exemplar. Repo-wide literature references live under [`docs/modules/`](../../../../docs/modules/) and [`docs/guides/`](../../../../docs/guides/); manuscript-syntax canon lives at [`docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md).
+Project-local agent-facing documentation. This is the operational rulebook for AI agents and contributors working inside the literature-discovery exemplar. Repo-wide literature references live under [`docs/modules/`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/modules) and [`docs/guides/`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/guides); manuscript-syntax canon lives at [`docs/guides/manuscript-semantics.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/guides/manuscript-semantics.md).
 
 ## File Inventory
 
@@ -12,7 +12,7 @@ Project-local agent-facing documentation. This is the operational rulebook for A
 | [`AGENTS.md`](AGENTS.md) | This index |
 | [`agent_instructions.md`](agent_instructions.md) | Behavioural constraints for AI agents (read-first priority) — 7 rules + verification checklist |
 | [`architecture.md`](architecture.md) | Two-layer compliance, module-responsibilities table, idempotency contract |
-| [`testing_philosophy.md`](testing_philosophy.md) | Zero-mock + LLM-as-callable; live counts in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md) |
+| [`testing_philosophy.md`](testing_philosophy.md) | Zero-mock + LLM-as-callable; live counts in [`docs/_generated/COUNTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/_generated/COUNTS.md) |
 | [`rendering_pipeline.md`](rendering_pipeline.md) | Five-phase flow (search → compose → figures+vars → PDF → review); `config.yaml` controls; troubleshooting |
 | [`style_guide.md`](style_guide.md) | 7 rules: zero-mock, infrastructure delegation, thin orchestrator, show-not-tell, explicit paths, dataclass standards, error messages |
 | [`syntax_guide.md`](syntax_guide.md) | Pandoc-crossref labels, `{{TOKEN}}` registry from `src/manuscript_variables.py`, two-bibliography citation rule |
@@ -43,7 +43,7 @@ This sequence is intentional. Each document provides context the next assumes:
 
 **Show-not-tell.** Manuscript prose must reference concrete file paths and APIs. A reader of `02_methodology.md` should be able to open `src/pipeline.py` and find the named function within seconds.
 
-**Two bibliographies.** `manuscript/references.bib` (single-query) and `manuscript/references_deep.bib` (deep-search) coexist; Pandoc `--natbib` merges every `manuscript/*.bib` at render time.
+**Two bibliographies.** `docs/manuscript/references.bib` (single-query) and `docs/manuscript/references_deep.bib` (deep-search) coexist; Pandoc `--natbib` merges every `docs/manuscript/*.bib` at render time.
 
 **Alphabetical script order.** `run_*` < `s_*` < `y_*` < `z_*` < `zz_*` is enforced by `tests/test_script_order.py`. The composer must run before the resolver.
 
@@ -71,7 +71,7 @@ cd projects/templates/template_search_project && uv run python scripts/review --
 
 ## Contracts
 
-- Prefer linking to [`../manuscript/config.yaml`](../manuscript/config.yaml) as the single configuration reference.
+- Prefer linking to [`../manuscript/config.yaml`](manuscript/config.yaml) as the single configuration reference.
 - Paths in docs assume execution from the repository root (`template/`) unless stated otherwise.
 - Cross-references inside this directory use relative links.
 
@@ -81,7 +81,7 @@ cd projects/templates/template_search_project && uv run python scripts/review --
 - [`../AGENTS.md`](../AGENTS.md) — project-level overview.
 - [`../pyproject.toml`](../pyproject.toml) — coverage-gate settings (`fail_under = 90`, `branch = true`).
 - [`../tests/conftest.py`](../tests/conftest.py) — `sys.path` setup and `MPLBACKEND=Agg`.
-- [`../manuscript/AGENTS.md`](../manuscript/AGENTS.md) — manuscript-directory protocol.
-- [`../manuscript/SYNTAX.md`](../manuscript/SYNTAX.md) — project-local Pandoc syntax overlay.
+- [`../manuscript/AGENTS.md`](manuscript/AGENTS.md) — manuscript-directory protocol.
+- [`../manuscript/SYNTAX.md`](manuscript/SYNTAX.md) — project-local Pandoc syntax overlay.
 - [`../src/AGENTS.md`](../src/AGENTS.md) — `src/` module-level guide.
-- [`../../../AGENTS.md`](../../../AGENTS.md) — root template documentation.
+- [`../../../AGENTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/AGENTS.md) — root template documentation.

@@ -6,7 +6,7 @@ refactor): the script now only wires up argparse and calls
 validation, markdown assembly, and artifact-writing logic.
 
 See the script's module docstring for the full read/write contract
-(``output/deep_search/aggregate.json`` in, ``manuscript/S01_literature_review.md``
+(``output/deep_search/aggregate.json`` in, ``docs/manuscript/S01_literature_review.md``
 + ``output/deep_search/composition_summary.json`` out) and the exit-code
 semantics (0 composed, 2 no deep-search outputs to compose).
 """
@@ -131,7 +131,7 @@ def compose_literature_review(
                 per_paper_notes[paper["id"]] = note_path.read_text(encoding="utf-8")
 
     # Compose the literature-review section.
-    out_path = Path(output) if output else (project_root / "manuscript" / "S01_literature_review.md")
+    out_path = Path(output) if output else (project_root / "docs" / "manuscript" / "S01_literature_review.md")
 
     lines: list[str] = []
     # Pandoc-friendly supplemental break: forces a new page and opens a
@@ -153,7 +153,7 @@ def compose_literature_review(
         f"keyword from {', '.join(config.deep_search.sources)}). All references "
         f"are stored in `{config.deep_search.unified_bibtex_path}` and resolved "
         f"by the combined-PDF pipeline (Pandoc `--natbib` + BibTeX over "
-        f"all `manuscript/*.bib` files)."
+        f"all `docs/manuscript/*.bib` files)."
     )
     lines.append("")
 
@@ -246,7 +246,7 @@ def compose_literature_review(
     out_path.write_text(composed_text, encoding="utf-8")
 
     # Defensive parity write. ``z_generate_manuscript_variables.py``
-    # normally runs *after* this script and copies ``manuscript/`` →
+    # normally runs *after* this script and copies ``docs/manuscript/`` →
     # ``output/manuscript/`` so the freshly composed S01 reaches the
     # render stage. If a previous run already populated
     # ``output/manuscript/`` (e.g. when the user reran only this

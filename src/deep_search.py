@@ -11,7 +11,7 @@ enriches every paper, and produces:
     - ``per_paper/<safe_id>.md`` — LLM deep summary (when LLM enabled)
 * ``output/deep_search/aggregate.json`` — every paper across all keywords.
 * ``output/deep_search/aggregate_report.md`` — cross-keyword overview.
-* ``manuscript/references_deep.bib`` — unified BibTeX (deduplicated).
+* ``docs/manuscript/references_deep.bib`` — unified BibTeX (deduplicated).
 
 The LLM is duck-typed as ``Callable[[str], str]`` so tests can pass a
 deterministic local callable that returns real, well-formed reading-note

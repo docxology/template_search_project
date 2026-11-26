@@ -1,6 +1,29 @@
 # Rendering Pipeline: Configuration → Search → Manuscript → PDF
 
-The `manuscript/` directory contains the narrative components of the search project. The full pipeline takes a `manuscript/config.yaml` and `data/corpus.json` (or live API responses) and produces a publication-ready combined PDF. This document describes every phase, what it produces, which scripts run it, and how to troubleshoot failures.
+The `docs/manuscript/` directory contains the narrative components of the search project. The full pipeline takes a `docs/manuscript/config.yaml` and `data/corpus.json` (or live API responses) and produces a publication-ready combined PDF. This document describes every phase, what it produces, which scripts run it, and how to troubleshoot failures.
+
+## Run the pinned renderer
+
+Complete the [offline quickstart](quickstart.md) first. Install Pandoc
+3.14, the matching [pandoc-crossref filter](https://github.com/lierdakil/pandoc-crossref/releases/tag/v0.3.26b),
+XeLaTeX with the packages in the
+[template run guide](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/RUN_GUIDE.md),
+and Mermaid CLI 12.2.0 with a Chrome headless shell for the inline diagrams.
+Put the renderer binaries on `PATH`. If Chrome is installed outside its
+usual location, set `PUPPETEER_EXECUTABLE_PATH` to its executable.
+
+Run from the pinned template checkout:
+
+```sh
+env -u NODE_PATH -u NODE_OPTIONS uv run --no-sync python scripts/pipeline/stage_03_render.py --project working/template_search_project
+uv run --no-sync python scripts/pipeline/stage_04_validate.py --project working/template_search_project
+```
+
+The combined PDF, HTML index, slides, and reports appear in the working
+project's `output/pdf/`, `output/web/`, `output/slides/`, and
+`output/reports/`. The renderer uses the hydrated copy in
+`output/manuscript/`. Maintain the source under
+[docs/manuscript/](manuscript/README.md).
 
 ## The Five-Phase Flow
 
@@ -18,7 +41,7 @@ uv run python projects/templates/template_search_project/scripts/run_deep_search
 uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py
 ```
 
-**Inputs**: `manuscript/config.yaml` (`project_config.search`, `project_config.enrichment`, root `llm`, and `project_config.deep_search`) plus `data/corpus.json` when `project_config.search.sources` includes `local`.
+**Inputs**: `docs/manuscript/config.yaml` (`project_config.search`, `project_config.enrichment`, root `llm`, and `project_config.deep_search`) plus `data/corpus.json` when `project_config.search.sources` includes `local`.
 
 **`run_deep_search.py` outputs**:
 
@@ -30,7 +53,7 @@ uv run python projects/templates/template_search_project/scripts/run_search_pipe
 | `<keyword_slug>/papers.json` | `output/deep_search/` | same |
 | `<keyword_slug>/reading_report.md` | `output/deep_search/` | same |
 | `<keyword_slug>/per_paper/<safe_id>.md` | `output/deep_search/` | LLM stage when enabled |
-| `references_deep.bib` | `manuscript/` | `src/deep_search.py` |
+| `references_deep.bib` | `docs/manuscript/` | `src/deep_search.py` |
 
 **`run_search_pipeline.py` outputs**:
 
@@ -42,7 +65,7 @@ uv run python projects/templates/template_search_project/scripts/run_search_pipe
 | `enrichment_log.json` | `output/` | `src/pipeline.py` |
 | `reading_report.md` | `output/` | `src/report.py::write_reading_report` |
 | `run_summary.json` | `output/` | `src/pipeline.py` |
-| `references.bib` | `manuscript/` | `src/pipeline.py` (via `infrastructure.reference.citation.paper_to_bibentry`) |
+| `references.bib` | `docs/manuscript/` | `src/pipeline.py` (via `infrastructure.reference.citation.paper_to_bibentry`) |
 | `llm/synthesis.md`, `llm/per_paper/<safe_id>.md` | `output/` | `src/synthesis.py` (when `config.llm.enabled`) |
 
 ### Phase 2 — Compose the Literature Review
@@ -56,7 +79,7 @@ uv run python projects/templates/template_search_project/scripts/s_compose_liter
 
 **Inputs**: `output/deep_search/aggregate.json` + per-keyword `papers.json` + per-paper notes.
 
-**Output**: `manuscript/S01_literature_review.md` — a multi-section narrative grouped by deep-search keyword, with citations into `references_deep.bib`. The composer also writes `output/deep_search/composition_summary.json` for downstream tooling.
+**Output**: `docs/manuscript/S01_literature_review.md` — a multi-section narrative grouped by deep-search keyword, with citations into `references_deep.bib`. The composer also writes `output/deep_search/composition_summary.json` for downstream tooling.
 
 The composer runs **between** the search runners (`run_*`) and the variable resolver (`z_*`) so the freshly composed S01 reaches the manuscript-mirroring stage. This ordering is enforced by `tests/test_script_order.py`.
 
@@ -72,7 +95,7 @@ uv run python projects/templates/template_search_project/scripts/y_generate_sear
 uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
 ```
 
-**Inputs**: `output/search/results.json` (figures) + `manuscript/config.yaml` + `output/deep_search/aggregate.json` when present (variables).
+**Inputs**: `output/search/results.json` (figures) + `docs/manuscript/config.yaml` + `output/deep_search/aggregate.json` when present (variables).
 
 **`y_generate_search_figures.py` outputs**:
 
@@ -87,9 +110,9 @@ uv run python projects/templates/template_search_project/scripts/z_generate_manu
 | File | Content |
 |---|---|
 | `output/data/manuscript_variables.json` | `{ field: value }` mapping from `ManuscriptVariables` |
-| `output/manuscript/*.md` | Resolved copies of `manuscript/*.md` (every `{{TOKEN}}` substituted) |
-| `output/manuscript/config.yaml` | Copy of `manuscript/config.yaml` |
-| `output/manuscript/*.bib` | Copies of every `manuscript/*.bib` (sorted) |
+| `output/manuscript/*.md` | Resolved copies of `docs/manuscript/*.md` (every `{{TOKEN}}` substituted) |
+| `output/manuscript/config.yaml` | Copy of `docs/manuscript/config.yaml` |
+| `output/manuscript/*.bib` | Copies of every `docs/manuscript/*.bib` (sorted) |
 
 **Critical**: every `{{TOKEN}}` defined in the field set of `src/manuscript_variables.py::ManuscriptVariables` must resolve before Phase 4. If a token is unresolved, the literal `{{TOKEN_NAME}}` will appear in the rendered PDF. The `variables_resolved` review stage detects this; the `<deep-search not run>` sentinel is the exception (it is intentionally written when no aggregate exists).
 
@@ -102,7 +125,7 @@ uv run python projects/templates/template_search_project/scripts/z_generate_manu
 uv run python scripts/pipeline/stage_03_render.py --project templates/template_search_project
 ```
 
-**Inputs**: `output/manuscript/*.md` (resolved) + `manuscript/config.yaml` + `manuscript/preamble.md` + every `manuscript/*.bib`.
+**Inputs**: `output/manuscript/*.md` (resolved) + `docs/manuscript/config.yaml` + `docs/manuscript/preamble.md` + every `docs/manuscript/*.bib`.
 
 **Infrastructure modules involved**:
 
@@ -113,7 +136,7 @@ uv run python scripts/pipeline/stage_03_render.py --project templates/template_s
 | `infrastructure/rendering/manuscript_discovery.py` | Orders `*.md` files lexically (`S01_*` lands after `99_*`) |
 | `infrastructure/core/config/loader.py` | Reads `config.yaml` for title, authors, metadata |
 
-`PDFRenderer.render_combined` invokes Pandoc with `--natbib`, emits one LaTeX document, and runs BibTeX over `\bibliography{stem1,stem2,...}` built from every `manuscript/*.bib` (sorted). Citations resolve uniformly across `references.bib` ∪ `references_deep.bib`.
+`PDFRenderer.render_combined` invokes Pandoc with `--natbib`, emits one LaTeX document, and runs BibTeX over `\bibliography{stem1,stem2,...}` built from every `docs/manuscript/*.bib` (sorted). Citations resolve uniformly across `references.bib` ∪ `references_deep.bib`.
 
 **Outputs**:
 - `output/pdf/template_search_project_combined.pdf` — final publication PDF
@@ -195,7 +218,7 @@ grep -rn "{{[A-Z_]*}}" projects/templates/template_search_project/output/manuscr
 
 **Cause**: `s_compose_literature_review.py` ran *after* `z_generate_manuscript_variables.py`, so `output/manuscript/references_deep.bib` is stale.
 
-**Fix**: Re-run the composer **before** the resolver, or run them in alphabetical script order via `./run.sh --project templates/template_search_project --pipeline`. The pre-render gate unions every `manuscript/*.bib`; a missing or stale second file means deep-only keys fail.
+**Fix**: Re-run the composer **before** the resolver, or run them in alphabetical script order via `./run.sh --project templates/template_search_project --pipeline`. The pre-render gate unions every `docs/manuscript/*.bib`; a missing or stale second file means deep-only keys fail.
 
 ### LLM stage produced no output
 

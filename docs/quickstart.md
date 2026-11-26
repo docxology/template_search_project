@@ -1,121 +1,52 @@
-# Quickstart
+# Run the bundled offline fixture
 
-This project ships a fully-runnable, **CI-safe**, **offline** literature
-pipeline. You can render the manuscript with no network access on a fresh
-clone.
+The bundled configuration uses the local corpus. Live backends,
+network enrichment, and LLM synthesis require explicit configuration.
+The [configuration reference](configuration.md) lists the defaults.
 
-```mermaid
-flowchart TB
-    S1[Step 1<br/>uv run pytest] --> S2[Step 2<br/>run_search_pipeline.py]
-    S2 --> S3[Step 3<br/>y_generate_search_figures.py<br/>z_generate_manuscript_variables.py]
-    S3 --> S4[Step 4<br/>./run.sh --pipeline<br/>full pipeline runner]
-    S4 --> S5[Step 5<br/>switch to live arxiv/crossref<br/>edit config.yaml]
-    S5 --> S6[Step 6<br/>enable LLM synthesis<br/>start ollama serve]
+## Set up the pinned template and project
 
-    classDef step fill:#1e3a8a,stroke:#0f172a,color:#fff
-    class S1,S2,S3,S4,S5,S6 step
+From a clean checkout of this project:
+
+```sh
+search_source="$PWD"
+git clone https://github.com/docxology/template.git ../search-renderer
+cd ../search-renderer
+git checkout --detach 87704feae0a4490ef7dad9c931d268e8c30273c2
+uv sync --locked --no-dev
+mkdir -p projects/working
+search_project="$PWD/projects/working/template_search_project"
+git -C "$search_source" worktree add --detach "$search_project" HEAD
+cd "$search_project"
+uv sync --locked --python 3.14 --extra dev --extra rendering --extra llm
 ```
 
-## 1. Smoke-test in 5 seconds
+The working project lives inside the pinned checkout because the runner
+executes its manuscript hydration script in a confined project directory.
 
-```bash
-uv run pytest projects/templates/template_search_project/tests/ -q
+## Analyze the local corpus and prepare the manuscript
+
+From the detached project directory:
+
+```sh
+mv output ../template_search_project_snapshot
+mkdir -p output
+cp -a ../template_search_project_snapshot/deep_search output/
+MPLBACKEND=Agg uv run --no-sync python scripts/run_search_pipeline.py --no-llm
+MPLBACKEND=Agg uv run --no-sync python scripts/y_generate_search_figures.py
+uv run --no-sync python scripts/z_generate_manuscript_variables.py
 ```
 
-All tests should pass without an internet connection. Live test count and
-coverage are tracked in
-[`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md) (see
-[`docs/testing_philosophy.md`](testing_philosophy.md)); locally, confirm the
-current count with
-`uv run pytest projects/templates/template_search_project/tests --collect-only -q`.
+These commands regenerate the single-query results, bibliography, and
+plots. The committed deep-search material supplies the evidence behind
+the supplemental review. The deep-search pipeline is disabled by default.
+The original checkout retains its tracked publication snapshot.
 
-## 2. Run the orchestrator end-to-end (offline)
+To verify the native code from the detached project directory:
 
-```bash
-uv run python projects/templates/template_search_project/scripts/run_search_pipeline.py
+```sh
+MPLBACKEND=Agg uv run --no-sync pytest tests --cov=src --cov-fail-under=90 -q
 ```
 
-This reads `manuscript/config.yaml` (default: `sources: [local]` ←
-`data/corpus.json`), produces:
-
-* `manuscript/references.bib` (Pandoc-ready BibTeX)
-* `output/corpus.json`
-* `output/search/results.json`
-* `output/search/cache/search_<hash>.json`
-* `output/reading_report.md`
-* `output/run_summary.json`
-
-…with no network calls and no Ollama dependency.
-
-## 3. Generate figures + manuscript variables
-
-```bash
-uv run python projects/templates/template_search_project/scripts/y_generate_search_figures.py
-uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
-```
-
-Outputs:
-
-* `output/figures/{papers_per_source,year_histogram,score_distribution}.png`
-* `output/data/manuscript_variables.json`
-* `output/manuscript/` — resolved `*.md`, copied `config.yaml` and `*.bib` (PDF stage prefers this directory when it contains markdown)
-
-## 4. Run under the full pipeline
-
-```bash
-./run.sh --project templates/template_search_project --pipeline
-```
-
-The infrastructure pipeline runner:
-
-1. Cleans `output/`
-2. Runs infrastructure + project tests
-3. Executes every `scripts/*.py` in alphabetical order: `run_deep_search.py`,
-   `run_search_pipeline.py`, `s_compose_literature_review.py`,
-   `y_generate_search_figures.py`, `z_generate_manuscript_variables.py`,
-   `zz_generate_review_report.py`, `zzz_build_dashboard.py`. The composer
-   runs *before* the manuscript resolver so
-   `output/manuscript/S01_literature_review.md` always reflects the latest
-   `references_deep.bib` keys. The dashboard builder runs last since it
-   consumes the corpus + aggregate JSON produced by the earlier scripts.
-4. Renders the combined PDF (Pandoc `--natbib` + BibTeX; all `manuscript/*.bib` merged).
-5. Validates the PDF
-6. Optionally runs LLM review/translations
-
-## 5. Switch to live search
-
-Edit `manuscript/config.yaml`:
-
-```yaml
-search:
-  query: "your topic"
-  sources: [arxiv, crossref]
-  crossref_mailto: "you@example.org"
-```
-
-Re-run step 2. The first run populates `output/search/cache/`; commit it
-for reproducible re-runs across machines.
-
-## 6. Enable LLM synthesis
-
-```bash
-ollama serve &
-ollama pull gemma3:4b
-```
-
-Edit `manuscript/config.yaml`:
-
-```yaml
-llm:
-  enabled: true
-  model: "gemma3:4b"
-  seed: 42
-  temperature: 0.0
-```
-
-Re-run step 2. The orchestrator now writes:
-
-* `output/llm/synthesis.md`
-* `output/llm/per_paper/<safe_id>.md`
-
-…and the reading report includes both sections.
+The [rendering guide](rendering_pipeline.md) explains how to turn the
+resolved manuscript and figures into PDF, HTML, and slide decks.

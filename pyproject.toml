@@ -20,7 +20,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "template_search_project"
-# Must match CITATION.cff / codemeta.json / .zenodo.json / manuscript/config.yaml,
+# Must match CITATION.cff / codemeta.json / .zenodo.json / docs/manuscript/config.yaml,
 # which all read `0.1` — the string form of the published Zenodo deposits
 # (concept 10.5281/zenodo.21298894, version 10.5281/zenodo.21298895).
 version = "0.1"

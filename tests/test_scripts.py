@@ -27,7 +27,7 @@ def _make_run(tmp_path: Path) -> Path:
     project_root = tmp_path / "proj"
     project_root.mkdir()
     # Copy authored manuscript inputs and the bundled corpus into the isolated project.
-    shutil.copytree(PROJECT_ROOT / "manuscript", project_root / "manuscript")
+    shutil.copytree(PROJECT_ROOT / "docs" / "manuscript", project_root / "docs" / "manuscript")
     (project_root / "data").mkdir()
     corpus_src = PROJECT_ROOT / "data" / "corpus.json"
     (project_root / "data" / "corpus.json").write_text(corpus_src.read_text(encoding="utf-8"), encoding="utf-8")
@@ -40,7 +40,7 @@ def _run_offline_pipeline(project_root: Path) -> subprocess.CompletedProcess[str
         "run_search_pipeline.py",
         [
             "--config",
-            str(project_root / "manuscript" / "config.yaml"),
+            str(project_root / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(project_root),
             "--no-llm",
@@ -53,7 +53,7 @@ def test_run_search_pipeline_offline_smoke(tmp_path: Path):
     result = _run_offline_pipeline(project_root)
     assert result.returncode == 0, result.stderr
     # Required outputs exist.
-    assert (project_root / "manuscript" / "references.bib").exists()
+    assert (project_root / "docs" / "manuscript" / "references.bib").exists()
     assert (project_root / "output" / "corpus.json").exists()
     assert (project_root / "output" / "search" / "results.json").exists()
     assert (project_root / "output" / "reading_report.md").exists()
@@ -131,15 +131,15 @@ def test_run_deep_search_disabled_exits_zero(tmp_path: Path):
     cleanly so the pipeline runner doesn't treat it as a stage failure."""
     iso = tmp_path / "iso"
     iso.mkdir()
-    (iso / "manuscript").mkdir()
+    (iso / "docs" / "manuscript").mkdir(parents=True)
     # Minimal config with deep_search disabled (default).
-    (iso / "manuscript" / "config.yaml").write_text(
+    (iso / "docs" / "manuscript" / "config.yaml").write_text(
         "paper:\n  title: 'X'\nsearch:\n  query: 'x'\n  sources: [local]\ndeep_search:\n  enabled: false\n",
         encoding="utf-8",
     )
     result = _run(
         "run_deep_search.py",
-        ["--config", str(iso / "manuscript" / "config.yaml"), "--project-root", str(iso)],
+        ["--config", str(iso / "docs" / "manuscript" / "config.yaml"), "--project-root", str(iso)],
     )
     assert result.returncode == 0
     assert "skipping deep search" in (result.stderr + result.stdout).lower()
@@ -149,12 +149,12 @@ def test_run_deep_search_enabled_with_corpus(tmp_path: Path):
     """End-to-end: --enable + local corpus + --no-llm must succeed."""
     iso = tmp_path / "iso"
     iso.mkdir()
-    (iso / "manuscript").mkdir()
+    (iso / "docs" / "manuscript").mkdir(parents=True)
     (iso / "data").mkdir()
     # Copy bundled corpus.
     bundled_corpus = PROJECT_ROOT / "data" / "corpus.json"
     (iso / "data" / "corpus.json").write_text(bundled_corpus.read_text(encoding="utf-8"), encoding="utf-8")
-    (iso / "manuscript" / "config.yaml").write_text(
+    (iso / "docs" / "manuscript" / "config.yaml").write_text(
         "paper:\n  title: 'X'\n"
         "search:\n  query: 'x'\n  sources: [local]\n"
         "  local_corpus: 'data/corpus.json'\n"
@@ -165,14 +165,14 @@ def test_run_deep_search_enabled_with_corpus(tmp_path: Path):
         "  fetch_fulltext: false\n"
         "  output_dir: 'output/deep_search'\n"
         "  search_cache_dir: 'output/cache/search'\n"
-        "  unified_bibtex_path: 'manuscript/refs.bib'\n",
+        "  unified_bibtex_path: 'docs/manuscript/refs.bib'\n",
         encoding="utf-8",
     )
     result = _run(
         "run_deep_search.py",
         [
             "--config",
-            str(iso / "manuscript" / "config.yaml"),
+            str(iso / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(iso),
             "--enable",
@@ -185,4 +185,4 @@ def test_run_deep_search_enabled_with_corpus(tmp_path: Path):
     )
     assert result.returncode == 0, result.stderr
     assert (iso / "output" / "deep_search" / "convex" / "papers.json").exists()
-    assert (iso / "manuscript" / "refs.bib").exists()
+    assert (iso / "docs" / "manuscript" / "refs.bib").exists()

@@ -179,7 +179,7 @@ def generate_review_report(project_root: Path, template_root: Path, review_dir: 
 
     summary, review_exit, review_notes = ensure_review_summary(project_root, review_dir)
 
-    bib_path = project_root / "manuscript" / "references.bib"
+    bib_path = project_root / "docs" / "manuscript" / "references.bib"
     bib_text = bib_path.read_text(encoding="utf-8")
     bib_entries = bib_text.count("@")
 
@@ -237,8 +237,8 @@ def generate_review_report(project_root: Path, template_root: Path, review_dir: 
         + ", ".join(sorted(os.listdir(project_root / "tests")))
     )
     lines.append(
-        f"**manuscript/ files** ({len(os.listdir(project_root / 'manuscript'))}):  "
-        + ", ".join(sorted(os.listdir(project_root / "manuscript")))
+        f"**manuscript/ files** ({len(os.listdir(project_root / 'docs' / 'manuscript'))}):  "
+        + ", ".join(sorted(os.listdir(project_root / "docs" / "manuscript")))
     )
     lines.append(
         f"**scripts/ executables** ({len(os.listdir(project_root / 'scripts'))}):  "
@@ -284,7 +284,7 @@ def generate_review_report(project_root: Path, template_root: Path, review_dir: 
     lines.append("**99_references.md** present (defers to .bib)")
     cite_pat = re.compile(r"\[@[\w:]+\]")
     cite_keys: set[str] = set()
-    for md in (project_root / "manuscript").glob("*.md"):
+    for md in (project_root / "docs" / "manuscript").glob("*.md"):
         if md.name == "99_references.md":
             continue
         cite_keys.update(cite_pat.findall(md.read_text(encoding="utf-8")))
@@ -456,7 +456,7 @@ bespoke checks implemented in src.analysis.
     lines.append(H("8.  NEXT STEPS — ANALYSIS / CODE / MANUSCRIPT", 2))
     nxt = [
         "**A.  Bibliography Committee**",
-        "  1.  Populate `manuscript/99_references.md` with actual citations or rely on",
+        "  1.  Populate `docs/manuscript/99_references.md` with actual citations or rely on",
         "      `references.bib` exclusively (remove deflective note if not needed).",
         "  2.  Add inline `[@key]` citations in 01-05 sections where prior art is discussed.",
         "",

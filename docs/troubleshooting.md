@@ -46,7 +46,7 @@ on stage 4.
 
 ## "BibTeX missing entries / wrong citation keys"
 
-**Symptom:** `manuscript/references.bib` does not contain a paper that
+**Symptom:** `docs/manuscript/references.bib` does not contain a paper that
 `output/search/results.json` does.
 
 **Causes / fixes:**
@@ -72,7 +72,7 @@ after `run_deep_search.py` when using Supplemental S1. The composer
 sorts after `run_*` but before `y_*` / `z_*` so the freshly composed
 `S01_literature_review.md` is in place before
 `z_generate_manuscript_variables.py` resolves the manuscript into
-`output/manuscript/`. The gate unions all `manuscript/*.bib`; a missing
+`output/manuscript/`. The gate unions all `docs/manuscript/*.bib`; a missing
 second file means keys only in the deep bibliography will fail.
 
 ## "Figures missing"
@@ -114,7 +114,7 @@ in their contents.
 
 ## "References.bib differs across runs even with the local corpus"
 
-**Symptom:** `git status` shows `manuscript/references.bib` modified
+**Symptom:** `git status` shows `docs/manuscript/references.bib` modified
 after a `--no-cache` run.
 
 **Causes / fixes:**

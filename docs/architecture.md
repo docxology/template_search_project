@@ -85,11 +85,11 @@ order**. We exploit this:
 
 1. `run_deep_search.py` — runs first (alphabetically `r` < `s` < `y` < `z`);
    produces `output/deep_search/aggregate.json` and
-   `manuscript/references_deep.bib`.
+   `docs/manuscript/references_deep.bib`.
 2. `run_search_pipeline.py` — runs second; produces
-   `output/search/results.json` and `manuscript/references.bib`.
+   `output/search/results.json` and `docs/manuscript/references.bib`.
 3. `s_compose_literature_review.py` — runs third; consumes the deep-search
-   outputs to write `manuscript/S01_literature_review.md`.
+   outputs to write `docs/manuscript/S01_literature_review.md`.
 4. `y_generate_search_figures.py` — runs fourth; consumes the standard-pipeline
    `results.json` to write the three diagnostic PNGs.
 5. `z_generate_manuscript_variables.py` — runs fifth; consumes both the standard
@@ -122,7 +122,7 @@ agree.
 
 The infrastructure `PDFRenderer.render_combined` path runs Pandoc with
 `--natbib`, emits a single LaTeX document, then BibTeX over
-`\bibliography{stem1,stem2,...}` built from every `manuscript/*.bib`
+`\bibliography{stem1,stem2,...}` built from every `docs/manuscript/*.bib`
 (sorted). Pre-render citation checks union the same files so split
 `references.bib` / `references_deep.bib` projects validate without false
 “undefined citation” errors.

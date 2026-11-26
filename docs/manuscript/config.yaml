@@ -92,7 +92,7 @@ project_config:
     # 400k chars (~100k tokens) fits inside gemma3:4b's 131k-token window.
     max_fulltext_chars: 400000
 
-  references_path: "manuscript/references.bib"
+  references_path: "docs/manuscript/references.bib"
 
   # Multi-keyword deep-search mode is disabled by default. Enable it only
   # after selecting a provenance-backed source and, separately, any LLM.
@@ -120,4 +120,4 @@ project_config:
     fulltext_cache_dir: "output/cache/pdf"
     search_cache_dir: "output/search/cache"
     write_unified_bibtex: true
-    unified_bibtex_path: "manuscript/references_deep.bib"
+    unified_bibtex_path: "docs/manuscript/references_deep.bib"

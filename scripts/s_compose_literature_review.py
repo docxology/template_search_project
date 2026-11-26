@@ -6,10 +6,10 @@ Reads:
   output/deep_search/aggregate_report.md
   output/deep_search/<keyword_slug>/reading_report.md
   output/deep_search/<keyword_slug>/per_paper/*.md
-  manuscript/references_deep.bib
+  docs/manuscript/references_deep.bib
 
 Writes:
-  manuscript/S01_literature_review.md
+  docs/manuscript/S01_literature_review.md
     A supplemental section (filename prefix ``S01_`` follows the Pandoc
     supplemental convention used across this template). Pandoc orders
     main sections (``01_*`` … ``99_references.md``) ahead of supplemental
@@ -21,7 +21,7 @@ Writes:
       - tabulates every paper with citation key + DOI/URL + year
       - inlines the LLM-generated CONTRIBUTION + SIGNIFICANCE paragraphs
         per paper (if present)
-      - cross-references manuscript/references_deep.bib so the combined-PDF
+      - cross-references docs/manuscript/references_deep.bib so the combined-PDF
         pipeline (Pandoc ``--natbib`` + BibTeX) resolves every [@key]
 
   output/manuscript/S01_literature_review.md  (only when that directory
@@ -34,7 +34,7 @@ Writes:
 
 Execution order: this script must run **before**
 ``z_generate_manuscript_variables.py`` (which copies
-``manuscript/`` → ``output/manuscript/``). The filename prefix ``s_``
+``docs/manuscript/`` → ``output/manuscript/``). The filename prefix ``s_``
 keeps it sorted after ``run_*`` and before ``y_*``/``z_*`` in
 ``scripts/pipeline/stage_02_analysis.py`` lexicographic discovery.
 
@@ -74,7 +74,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "--config",
-        default=str(_project_root / "manuscript" / "config.yaml"),
+        default=str(_project_root / "docs" / "manuscript" / "config.yaml"),
     )
     parser.add_argument(
         "--project-root",
@@ -83,7 +83,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--output",
         default=None,
-        help="Output markdown path (defaults to manuscript/S01_literature_review.md).",
+        help="Output markdown path (defaults to docs/manuscript/S01_literature_review.md).",
     )
     args = parser.parse_args(argv)
 

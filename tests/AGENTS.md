@@ -24,4 +24,4 @@ Project-local `pyproject.toml` sets `fail_under = 90` for coverage reports when 
 ## See also
 
 - [`../AGENTS.md`](../AGENTS.md)
-- [`README.md`](README.md)
+- [`README.md`](../docs/reference/tests.md)

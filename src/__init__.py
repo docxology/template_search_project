@@ -2,7 +2,7 @@
 
 This package keeps *all* business logic for the project:
 
-* :mod:`template_search_project.config` — typed access to ``manuscript/config.yaml``.
+* :mod:`template_search_project.config` — typed access to ``docs/manuscript/config.yaml``.
 * :mod:`template_search_project.pipeline` — pure orchestration: search →
   enrich → export → synthesise. Imports from ``infrastructure.*``; never
   performs I/O directly.
