@@ -81,7 +81,7 @@ def compute_variables(
     # When no deep-search aggregate exists yet, surface a discoverable
     # sentinel rather than a silent dash so reviewers can grep the
     # rendered manuscript for "<deep-search not run>" to spot missed
-    # substitutions (see manuscript/SYNTAX.md).
+    # substitutions (see docs/manuscript/SYNTAX.md).
     uniq = "<deep-search not run>"
     if aggregate_payload is not None:
         up = aggregate_payload.get("unique_papers")
@@ -148,13 +148,13 @@ def write_resolved_manuscript_tree(
     project_root: Path | str,
     variables: ManuscriptVariables,
 ) -> Path:
-    """Write ``manuscript/*.md`` with substitutions plus aux files into ``output/manuscript``.
+    """Write ``docs/manuscript/*.md`` with substitutions plus aux files into ``output/manuscript``.
 
     PDF rendering prefers ``output/manuscript`` when it contains markdown
     (see :func:`infrastructure.rendering.pipeline._resolve_manuscript_dir`).
     """
     root = Path(project_root)
-    manuscript_dir = root / "manuscript"
+    manuscript_dir = root / "docs" / "manuscript"
     out_dir = root / "output" / "manuscript"
     out_dir.mkdir(parents=True, exist_ok=True)
 

@@ -19,13 +19,13 @@ figure_types:
   - year_histogram
   - score_distribution
 citation_policy: official_or_scholarly
-source_policy: "Prefer the bundled offline data/corpus.json (default, CI-safe) or live arxiv/crossref/paperclip backends configured in manuscript/config.yaml; every reference must resolve to a retrieved SearchResult record, not a hand-typed citation."
+source_policy: "Prefer the bundled offline data/corpus.json (default, CI-safe) or live arxiv/crossref/paperclip backends configured in docs/manuscript/config.yaml; every reference must resolve to a retrieved SearchResult record, not a hand-typed citation."
 review_gates:
   - source_quality
   - citation_integrity
   - publication_readiness
 artifact_expectations:
-  - manuscript/references.bib
+  - docs/manuscript/references.bib
   - output/corpus.json
   - output/search/results.json
   - output/reading_report.md

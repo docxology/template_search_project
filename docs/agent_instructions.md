@@ -28,7 +28,7 @@ For navigation, [`README.md`](README.md) lists every doc by audience.
 
 ## Rule 2: Coverage Gate — 90% Floor on `src/`
 
-Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md); the suite runs well above the 90% gate (set by the project `pyproject.toml` and re-enforced at the root pipeline).
+Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/_generated/COUNTS.md); the suite runs well above the 90% gate (set by the project `pyproject.toml` and re-enforced at the root pipeline).
 
 Before modifying any file in `src/`, count the tests that exercise it. After modifying, run:
 
@@ -64,7 +64,7 @@ Unlike `template_code_project` (whose `src/` is `infrastructure`-free), this pro
 
 ## Rule 4: "Show, Not Tell" Documentation
 
-When updating `manuscript/` or any docs, refer to concrete file paths and concrete API surfaces, not vague descriptions.
+When updating `docs/manuscript/` or any docs, refer to concrete file paths and concrete API surfaces, not vague descriptions.
 
 **BAD** (vague, unverifiable):
 ```markdown
@@ -77,7 +77,7 @@ Our pipeline uses standard literature-search APIs and produces a citation list.
 `infrastructure.search.literature.LiteratureClient.search` against the backends
 listed in `project_config.search.sources`, then writes BibTeX entries via
 `infrastructure.reference.citation.paper_to_bibentry` to
-`projects/templates/template_search_project/manuscript/references.bib`.
+`projects/templates/template_search_project/docs/manuscript/references.bib`.
 ```
 
 **BAD**:
@@ -105,7 +105,7 @@ This project is offline- and reproducibility-first. Four caches and one seeded L
 4. BibTeX writer (`paper_to_bibentry` + `_disambiguate_citation_key`) — deterministic citation keys with alphabetical disambiguation.
 5. LLM — `seed=42`, `temperature=0.0`, model pinned via `config.llm.model` (default `gemma3:4b`).
 
-CI-safe defaults in `manuscript/config.yaml`:
+CI-safe defaults in `docs/manuscript/config.yaml`:
 
 ```yaml
 search:
@@ -123,23 +123,23 @@ Tests assume these defaults. When changing them, also update `tests/test_readme_
 ## Rule 6: Style and Syntax Guides Govern Their Domains
 
 - [`style_guide.md`](style_guide.md) governs `src/*.py`, `tests/test_*.py`, `scripts/*.py` — mock prohibition, infrastructure-delegation table, dataclass standards, error-message format.
-- [`syntax_guide.md`](syntax_guide.md) governs `manuscript/*.md` — Pandoc-crossref labels, the live `{{TOKEN}}` registry from `src/manuscript_variables.py`, the two-bib citation rule, and the figure label registry.
+- [`syntax_guide.md`](syntax_guide.md) governs `docs/manuscript/*.md` — Pandoc-crossref labels, the live `{{TOKEN}}` registry from `src/manuscript_variables.py`, the two-bib citation rule, and the figure label registry.
 
 Do not apply code-style rules to manuscript prose, and do not apply manuscript syntax rules to Python source.
 
 ---
 
-## Rule 7: `output/` Is Disposable — Never Edit Generated Files
+## Rule 7: Keep generated output separate from source
 
-The entire `projects/templates/template_search_project/output/` tree (and the auto-populated files `manuscript/references.bib`, `manuscript/references_deep.bib`, `manuscript/S01_literature_review.md`) is rewritten on every run. Editing those files has zero lasting effect.
+The entire `projects/templates/template_search_project/output/` tree (and the auto-populated files `docs/manuscript/references.bib`, `docs/manuscript/references_deep.bib`, `docs/manuscript/S01_literature_review.md`) is rewritten on every run. Editing those files has zero lasting effect.
 
 If you need to change what a generated file contains, change the **generator**:
 
-- To change `manuscript/references.bib` → modify `src/pipeline.py` or the inputs in `data/corpus.json` / `manuscript/config.yaml`.
-- To change `manuscript/references_deep.bib` → modify `src/deep_search.py` or `project_config.deep_search.keywords`.
-- To change `manuscript/S01_literature_review.md` → modify `scripts/s_compose_literature_review.py`.
+- To change `docs/manuscript/references.bib` → modify `src/pipeline.py` or the inputs in `data/corpus.json` / `docs/manuscript/config.yaml`.
+- To change `docs/manuscript/references_deep.bib` → modify `src/deep_search.py` or `project_config.deep_search.keywords`.
+- To change `docs/manuscript/S01_literature_review.md` → modify `scripts/s_compose_literature_review.py`.
 - To change `output/figures/*.png` → modify `src/figures.py` and the matching call in `scripts/y_generate_search_figures.py`.
-- To change resolved tokens in `output/manuscript/*.md` → modify `src/manuscript_variables.py` (token definitions) or `manuscript/*.md` (templates).
+- To change resolved tokens in `output/manuscript/*.md` → modify `src/manuscript_variables.py` (token definitions) or `docs/manuscript/*.md` (templates).
 
 See [`output_conventions.md`](output_conventions.md) for the complete producer / consumer mapping.
 

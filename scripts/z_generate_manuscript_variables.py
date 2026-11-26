@@ -73,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
         logger.warning("No search results at %s; skipping.", results_path)
         return 2
 
-    config_path = Path(args.config).resolve() if args.config else project_root / "manuscript" / "config.yaml"
+    config_path = Path(args.config).resolve() if args.config else project_root / "docs" / "manuscript" / "config.yaml"
     config = load_project_config(config_path)
     payload = load_search_result_payload(results_path)
 

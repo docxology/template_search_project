@@ -5,7 +5,7 @@ review:
     infra_module: infrastructure.validation.cli
     command: prerender
     args:
-    - manuscript
+    - docs/manuscript
     - --repo-root
     - .
     description: 'Strict source-markdown gate: undefined citations, malformed markers'
@@ -22,7 +22,7 @@ review:
     infra_module: infrastructure.reference.citation.cli
     command: validate
     args:
-    - manuscript/references.bib
+    - docs/manuscript/references.bib
     - --strict
     description: Validate BibTeX syntax and required fields
   - name: bibliography_completeness

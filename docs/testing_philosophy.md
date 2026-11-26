@@ -46,12 +46,12 @@ Tests pass a deterministic local function. Runtime callers pass the adapter buil
 | `tests/test_script_order.py` | Alphabetical convention: `run_*` < `s_*` < `y_*` < `z_*` < `zz_*` |
 | `tests/test_composition_script.py` | `scripts/s_compose_literature_review.py` end-to-end |
 | `tests/test_search_invariants_and_dashboard.py` | `src/search_invariants.py` + dashboard payloads |
-| `tests/test_readme_config_consistency.py` | Project README claims match live `manuscript/config.yaml` |
+| `tests/test_readme_config_consistency.py` | Project README claims match live `docs/manuscript/config.yaml` |
 
 Configuration: `projects/templates/template_search_project/pyproject.toml` (`fail_under = 90`).
 Conftest: `projects/templates/template_search_project/tests/conftest.py` (sets `MPLBACKEND=Agg`, adds `src/` to `sys.path`).
 
-Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](../../../../docs/_generated/COUNTS.md); the suite runs well above the 90% gate.
+Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/_generated/COUNTS.md); the suite runs well above the 90% gate.
 
 ## Three Pillars
 

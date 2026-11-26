@@ -10,7 +10,7 @@ Thin orchestrators executed in **lexicographic order** by `scripts/pipeline/stag
 |-------|--------|------|
 | 1 | [`run_deep_search.py`](run_deep_search.py) | Multi-keyword fan-out → unified `references_deep.bib` and `output/deep_search/aggregate.json` |
 | 2 | [`run_search_pipeline.py`](run_search_pipeline.py) | Single-query search → enrich → `references.bib` → `output/search/results.json` |
-| 3 | [`s_compose_literature_review.py`](s_compose_literature_review.py) | Auto-composes `manuscript/S01_literature_review.md` from the deep-search outputs (must run before the manuscript resolver below) |
+| 3 | [`s_compose_literature_review.py`](s_compose_literature_review.py) | Auto-composes `docs/manuscript/S01_literature_review.md` from the deep-search outputs (must run before the manuscript resolver below) |
 | 4 | [`y_generate_search_figures.py`](y_generate_search_figures.py) | Figures under `output/figures/` |
 | 5 | [`z_generate_manuscript_variables.py`](z_generate_manuscript_variables.py) | `output/data/manuscript_variables.json` and resolved `output/manuscript/` (the PDF-rendering stage prefers this tree when present) |
 | 6 | [`zz_generate_review_report.py`](zz_generate_review_report.py) | Runs `review` if needed; writes `output/review/REVIEW_REPORT.md` |
@@ -46,4 +46,4 @@ cd projects/templates/template_search_project && uv run python scripts/review
 ## See also
 
 - [`../AGENTS.md`](../AGENTS.md)
-- [`README.md`](README.md)
+- [`README.md`](../docs/reference/scripts.md)

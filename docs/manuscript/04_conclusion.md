@@ -7,7 +7,7 @@
 * **Thin orchestrator pattern** — `scripts/run_search_pipeline.py` does only argument parsing, configuration loading, and I/O; all logic lives in `infrastructure/` or `src/`.
 * **No mocks** — neither in the new infrastructure modules nor in the project test suite.
 * **Multi-project support** — the project lives alongside `template_code_project/` and follows the same layout, so the existing pipeline runner discovers and executes it without modification.
-* **Reproducibility** — deterministic search caching, on-disk enrichment caching, and pinned LLM seeds make a single `manuscript/config.yaml` the only artifact a reviewer needs.
+* **Reproducibility** — deterministic search caching, on-disk enrichment caching, and pinned LLM seeds make a single `docs/manuscript/config.yaml` the only artifact a reviewer needs.
 
 We close with three concrete extensions that build naturally on this foundation:
 
@@ -21,5 +21,5 @@ The bundled `data/corpus.json` is a deterministic workflow fixture containing
 citation-shaped optimisation records [@boyd2004convex; @nocedal2006numerical;
 @nesterov2013gradient; @kingma2014adam; @reddi2018convergence;
 @peng2011reproducible]. It ensures that the auto-generated
-`manuscript/references.bib` contains citation-ready entries that downstream
+`docs/manuscript/references.bib` contains citation-ready entries that downstream
 tooling can resolve; it does not establish empirical literature findings.

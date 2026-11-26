@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Multi-keyword deep search orchestrator.
 
-Reads ``deep_search`` block from ``manuscript/config.yaml``, runs one
+Reads ``deep_search`` block from ``docs/manuscript/config.yaml``, runs one
 search per keyword (each capped at ``max_results_per_keyword``), fully
 enriches every paper, optionally generates a per-paper LLM deep
 summary, and writes a per-keyword reading report plus an aggregate
@@ -47,8 +47,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "--config",
-        default=str(_project_root / "manuscript" / "config.yaml"),
-        help="Path to manuscript/config.yaml",
+        default=str(_project_root / "docs" / "manuscript" / "config.yaml"),
+        help="Path to docs/manuscript/config.yaml",
     )
     parser.add_argument(
         "--project-root",

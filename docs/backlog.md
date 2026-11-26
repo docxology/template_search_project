@@ -1,7 +1,7 @@
 # template_search_project TODO
 
 This backlog is future-only. Completed validation and dated review evidence are preserved in
-[`docs/maintenance/exemplar-backlog-history.md`](../../../docs/maintenance/exemplar-backlog-history.md)
+[`docs/maintenance/exemplar-backlog-history.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/maintenance/exemplar-backlog-history.md)
 or in source-owned generated receipts. Each active row must retain a stable ID, size, dependency,
 next action, proving artifact, acceptance command, and negative control; absence of an owner or external receipt
 keeps a capability blocked rather than silently promoting it.
@@ -33,7 +33,7 @@ keeps a capability blocked rather than silently promoting it.
 ## Configurable-surface gaps
 
 - Retargeting the query, sources, and deep-search keywords should remain
-  entirely `manuscript/config.yaml`-owned; avoid hard-coding search terms in
+  entirely `docs/manuscript/config.yaml`-owned; avoid hard-coding search terms in
   `src/`.
 - Keep the Ollama budget knobs (`context_window`, `long_max_tokens`,
   `max_input_length`, `review_timeout`) explicit in config rather than
@@ -59,7 +59,7 @@ keeps a capability blocked rather than silently promoting it.
 - Keep the byte-identical-across-reruns test
   (`tests/test_pipeline.py::TestRunLiteraturePipeline::test_bibtex_byte_identical_across_reruns`)
   in sync as new pipeline stages are added.
-- Keep `manuscript/references_deep.bib` derived from the committed deep-search
+- Keep `docs/manuscript/references_deep.bib` derived from the committed deep-search
   aggregate and fail when citation keys or source revisions drift.
 
 ## Minor upcoming

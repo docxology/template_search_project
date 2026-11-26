@@ -180,7 +180,7 @@ def test_load_aggregate_payload_missing_returns_none(tmp_path: Path):
 
 def test_write_resolved_manuscript_tree(tmp_path: Path):
     root = tmp_path / "proj"
-    mdir = root / "manuscript"
+    mdir = root / "docs" / "manuscript"
     mdir.mkdir(parents=True)
     (mdir / "config.yaml").write_text("paper:\n  title: T\nsearch:\n  query: x\n", encoding="utf-8")
     (mdir / "references.bib").write_text("@article{a,\n title={t}\n}\n", encoding="utf-8")
@@ -222,7 +222,7 @@ def test_compute_variables_aggregate_unique_papers_not_list():
 
 def test_write_resolved_manuscript_tree_without_config_yaml(tmp_path: Path):
     root = tmp_path / "proj"
-    mdir = root / "manuscript"
+    mdir = root / "docs" / "manuscript"
     mdir.mkdir(parents=True)
     (mdir / "x.md").write_text("{{CONFIG_QUERY}}\n", encoding="utf-8")
     vars_ = compute_variables(

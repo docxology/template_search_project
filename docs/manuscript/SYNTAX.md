@@ -1,6 +1,6 @@
 # Manuscript Syntax Reference (search_project)
 
-Project-specific overlay on the canonical [`docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md) — read that file first; this file documents **search_project**-specific conventions.
+Project-specific overlay on the canonical [`docs/guides/manuscript-semantics.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/guides/manuscript-semantics.md) — read that file first; this file documents **search_project**-specific conventions.
 
 The search exemplar is the only one of the three template projects that **auto-populates** its bibliography. Two `.bib` files coexist:
 
@@ -9,7 +9,7 @@ The search exemplar is the only one of the three template projects that **auto-p
 | [`references.bib`](references.bib) | Hand-curated **plus** auto-populated by `scripts/run_search_pipeline.py` | Standard single-query workflow |
 | [`references_deep.bib`](references_deep.bib) | Auto-populated only — overwritten on every `run_deep_search.py` invocation | Deep-search workflow ([@sec:deep_search]) |
 
-The Pandoc invocation merges every `manuscript/*.bib` at render time, so citations resolve uniformly across the union of the two files.
+The Pandoc invocation merges every `docs/manuscript/*.bib` at render time, so citations resolve uniformly across the union of the two files.
 
 ## Citations
 
@@ -25,9 +25,9 @@ When you write a manual `[@key]` reference, the key must already exist in either
 
 ```bash
 uv run python -m infrastructure.reference.citation.cli validate \
-    projects/templates/template_search_project/manuscript/references.bib --strict
+    projects/templates/template_search_project/docs/manuscript/references.bib --strict
 uv run python -m infrastructure.reference.citation.cli validate \
-    projects/templates/template_search_project/manuscript/references_deep.bib --strict
+    projects/templates/template_search_project/docs/manuscript/references_deep.bib --strict
 ```
 
 ## Section labels
@@ -61,7 +61,7 @@ Reference with `[@fig:papers_per_source]`, `[@fig:year_histogram]`, `[@fig:score
 
 ## `{{TOKEN}}` substitution
 
-`scripts/z_generate_manuscript_variables.py` (and the deep-search variant) replaces these tokens at render time. Defined in [`src/manuscript_variables.py`](../src/manuscript_variables.py):
+`scripts/z_generate_manuscript_variables.py` (and the deep-search variant) replaces these tokens at render time. Defined in [`src/manuscript_variables.py`](../../src/manuscript_variables.py):
 
 | Token | Source |
 |---|---|
@@ -90,8 +90,8 @@ When a token has no value (e.g. before any deep-search run), the resolver substi
 
 ## See also
 
-- [`../../../../docs/guides/manuscript-semantics.md`](../../../../docs/guides/manuscript-semantics.md) — Repository-wide canonical semantics
+- [`../../../../docs/guides/manuscript-semantics.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/guides/manuscript-semantics.md) — Repository-wide canonical semantics
 - [`AGENTS.md`](AGENTS.md) — Substitution-marker registry
-- [`../docs/output_conventions.md`](../docs/output_conventions.md) — What lands in `output/`
-- [`../../../../infrastructure/search/literature/SKILL.md`](../../../../infrastructure/search/literature/SKILL.md) — Search backend API
-- [`../../../../infrastructure/reference/citation/SKILL.md`](../../../../infrastructure/reference/citation/SKILL.md) — BibTeX read/write API
+- [`../docs/output_conventions.md`](../output_conventions.md) — What lands in `output/`
+- [`../../../../infrastructure/search/literature/SKILL.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/infrastructure/search/literature/SKILL.md) — Search backend API
+- [`../../../../infrastructure/reference/citation/SKILL.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/infrastructure/reference/citation/SKILL.md) — BibTeX read/write API

@@ -112,7 +112,7 @@ classDiagram
 
 ## On-disk layout
 
-The project keeps committed input data in `data/`, regeneratable outputs in `output/` (gitignored), and the manuscript source in `manuscript/`. The Mermaid flowchart in this subsection (rendered in the HTML build; the PDF build strips Mermaid) lists every artefact the standard pipeline writes:
+The project keeps committed input data in `data/`, a tracked publication snapshot and regeneratable artifacts in `output/`, and the manuscript source in `docs/manuscript/`. The Mermaid flowchart in this subsection (rendered in the HTML build; the PDF build strips Mermaid) lists every artefact the standard pipeline writes:
 
 * `data/corpus.json` — the bundled offline corpus, CI-safe default for `LocalBackend`.
 * `output/search/results.json` — raw `SearchResult` JSON from the latest run.
@@ -127,13 +127,13 @@ The project keeps committed input data in `data/`, regeneratable outputs in `out
 * `output/enrichment_log.json` — one entry per fetcher per paper.
 * `output/reading_report.md` — final markdown reading report.
 * `output/run_summary.json` — one-line metadata for the run.
-* `manuscript/references.bib` — auto-populated, Pandoc-ready BibTeX.
+* `docs/manuscript/references.bib` — auto-populated, Pandoc-ready BibTeX.
 
 ```mermaid
 flowchart TB
     P["projects/templates/template_search_project/"]
     P --> DAT["data/<br/>committed"]
-    P --> OUT["output/<br/>regeneratable · gitignored"]
+    P --> OUT["output/<br/>generated · published snapshot tracked"]
     P --> MAN["manuscript/"]
 
     DAT --> CORP_IN[corpus.json<br/>bundled offline corpus<br/>CI-safe default]

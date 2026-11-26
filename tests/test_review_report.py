@@ -113,13 +113,13 @@ def _make_isolated_project(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
     (project_root / "README.md").write_text("# Project\n\n## Purpose\n\nStuff.\n", encoding="utf-8")
-    (project_root / "manuscript").mkdir()
-    (project_root / "manuscript" / "references.bib").write_text(
+    (project_root / "docs" / "manuscript").mkdir(parents=True)
+    (project_root / "docs" / "manuscript" / "references.bib").write_text(
         "@article{a2020,\n  title={T},\n}\n@article{b2021,\n  title={U},\n}\n",
         encoding="utf-8",
     )
-    (project_root / "manuscript" / "01_intro.md").write_text("Intro citing [@a2020] and [@b2021].\n", encoding="utf-8")
-    (project_root / "manuscript" / "99_references.md").write_text("See bib.\n", encoding="utf-8")
+    (project_root / "docs" / "manuscript" / "01_intro.md").write_text("Intro citing [@a2020] and [@b2021].\n", encoding="utf-8")
+    (project_root / "docs" / "manuscript" / "99_references.md").write_text("See bib.\n", encoding="utf-8")
     _write_fake_src_module(project_root)
     (project_root / "tests").mkdir()
     (project_root / "tests" / "test_x.py").write_text("", encoding="utf-8")
@@ -214,12 +214,12 @@ def test_gaps_section_reflects_live_citation_count_not_hardcoded_zero(tmp_path: 
     # live count (3) differs from both "0" (the old hardcoded literal) and
     # "2" (the other test fixture's count) — any residual hardcoding would
     # be caught by either assertion below.
-    bib_path = project_root / "manuscript" / "references.bib"
+    bib_path = project_root / "docs" / "manuscript" / "references.bib"
     bib_path.write_text(
         bib_path.read_text(encoding="utf-8") + "@article{c2022,\n  title={V},\n}\n",
         encoding="utf-8",
     )
-    (project_root / "manuscript" / "02_extra.md").write_text("Further discussion citing [@c2022].\n", encoding="utf-8")
+    (project_root / "docs" / "manuscript" / "02_extra.md").write_text("Further discussion citing [@c2022].\n", encoding="utf-8")
 
     exit_code = generate_review_report(project_root, REPO_ROOT, project_root / "output" / "review")
     assert exit_code == 0
@@ -239,7 +239,7 @@ def test_gaps_section_reports_zero_citations_when_manuscript_has_none(tmp_path: 
     now-conditional bibliography row.
     """
     project_root = _make_isolated_project(tmp_path)
-    for md in (project_root / "manuscript").glob("*.md"):
+    for md in (project_root / "docs" / "manuscript").glob("*.md"):
         if md.name != "99_references.md":
             md.write_text("No citations here.\n", encoding="utf-8")
 

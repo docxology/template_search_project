@@ -41,7 +41,7 @@ class StageResult:
 
 #: Pandoc-crossref reference prefixes that share the ``[@…]`` syntax with
 #: BibTeX citations but resolve against in-document labels (sections,
-#: figures, tables, equations, etc.) rather than ``manuscript/*.bib``.
+#: figures, tables, equations, etc.) rather than ``docs/manuscript/*.bib``.
 #: These must be excluded from the bibliography-completeness check.
 _CROSSREF_PREFIXES = ("sec:", "fig:", "tbl:", "eq:", "lst:")
 
@@ -103,8 +103,8 @@ def _extract_citation_keys(text: str) -> set[str]:
 
 def validate_bibliography_completeness(project_root: Path) -> StageResult:
     """
-    Ensure every ``[@citation_key]`` found in ``manuscript/*.md`` has a
-    corresponding entry in at least one ``manuscript/*.bib`` file.
+    Ensure every ``[@citation_key]`` found in ``docs/manuscript/*.md`` has a
+    corresponding entry in at least one ``docs/manuscript/*.bib`` file.
 
     The check ignores:
 
@@ -120,7 +120,7 @@ def validate_bibliography_completeness(project_root: Path) -> StageResult:
       - passed: all keys resolved
       - failed: some keys missing (details includes "missing_keys")
     """
-    manuscript_dir = project_root / "manuscript"
+    manuscript_dir = project_root / "docs" / "manuscript"
     bib_paths = sorted(manuscript_dir.glob("*.bib"))
     if not bib_paths:
         return StageResult(
@@ -173,14 +173,14 @@ def validate_variables_resolved(project_root: Path) -> StageResult:
     When ``output/manuscript/*.md`` exists (written by
     ``scripts/z_generate_manuscript_variables.py``), that directory is what
     the PDF-rendering stage renders; only those files are scanned. Otherwise the source
-    ``manuscript/*.md`` tree is scanned (templates may still contain
+    ``docs/manuscript/*.md`` tree is scanned (templates may still contain
     placeholders).
     """
     injected_dir = project_root / "output" / "manuscript"
     if injected_dir.exists() and any(injected_dir.glob("*.md")):
         scan_root = injected_dir
     else:
-        scan_root = project_root / "manuscript"
+        scan_root = project_root / "docs" / "manuscript"
 
     unresolved: list[tuple[Path, str]] = []
 
@@ -310,7 +310,7 @@ def check_determinism_artifacts(project_root: Path) -> StageResult:
         issues.append("Search cache directory not present")
 
     # 3. Config seed + temperature
-    config_path = project_root / "manuscript" / "config.yaml"
+    config_path = project_root / "docs" / "manuscript" / "config.yaml"
     if config_path.exists():
         import yaml as _yaml
 
@@ -322,7 +322,7 @@ def check_determinism_artifacts(project_root: Path) -> StageResult:
         findings["llm_seed"] = seed
         findings["llm_temperature"] = temp
         if seed is None:
-            issues.append("llm.seed not set in manuscript/config.yaml")
+            issues.append("llm.seed not set in docs/manuscript/config.yaml")
         if temp is None or temp > 0.1:
             issues.append(f"llm.temperature={temp} is not pinned to 0 for determinism")
 

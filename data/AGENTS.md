@@ -24,4 +24,4 @@ point an arXiv/Crossref client at `write_corpus(...)` — see
 3. Do not store generated CSV/JSON/PNG under `data/` — those go to
    `output/`.
 
-Quick orientation: [`README.md`](README.md).
+Quick orientation: [`README.md`](../docs/reference/data.md).

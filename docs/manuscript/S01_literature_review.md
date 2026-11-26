@@ -4,7 +4,7 @@
 
 _Composed by `scripts/s_compose_literature_review.py` from the most recent deep-search run. Edit the script, not this file — manual edits will be overwritten on the next pipeline run._
 
-This review covers **3 keyword(s)**, **300 unique paper(s)** (retrieved at up to 100 per keyword from arxiv, crossref). All references are stored in `manuscript/references_deep.bib` and resolved by the combined-PDF pipeline (Pandoc `--natbib` + BibTeX over all `manuscript/*.bib` files).
+This review covers **3 keyword(s)**, **300 unique paper(s)** (retrieved at up to 100 per keyword from arxiv, crossref). All references are stored in `docs/manuscript/references_deep.bib` and resolved by the combined-PDF pipeline (Pandoc `--natbib` + BibTeX over all `docs/manuscript/*.bib` files).
 
 ## convex optimization
 

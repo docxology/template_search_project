@@ -17,7 +17,7 @@ Domain glue only: configuration, pipeline orchestration over `infrastructure/`, 
 | [`report.py`](report.py) | `write_reading_report` |
 | [`figures.py`](figures.py) | Matplotlib summaries from search results |
 | [`manuscript_variables.py`](manuscript_variables.py) | ``compute_variables``, ``write_resolved_manuscript_tree`` — JSON + ``output/manuscript/`` for render |
-| [`analysis.py`](analysis.py) | Custom `scripts/review` stage hooks; `validate_bibliography_completeness` unions all `manuscript/*.bib`; `validate_variables_resolved` prefers `output/manuscript/` when present |
+| [`analysis.py`](analysis.py) | Custom `scripts/review` stage hooks; `validate_bibliography_completeness` unions all `docs/manuscript/*.bib`; `validate_variables_resolved` prefers `output/manuscript/` when present |
 | [`composition.py`](composition.py) | `compose_literature_review` — thin-orchestrator body for `scripts/s_compose_literature_review.py` |
 | [`dashboard.py`](dashboard.py) | Interactive search-coverage dashboard payload/panels — body for `scripts/zzz_build_dashboard.py` |
 | [`deep_search_cli.py`](deep_search_cli.py) | `run_deep_search_cli` — CLI-orchestration body for `scripts/run_deep_search.py` |
@@ -33,4 +33,4 @@ Domain glue only: configuration, pipeline orchestration over `infrastructure/`, 
 ## See also
 
 - [`../AGENTS.md`](../AGENTS.md)
-- [`README.md`](README.md)
+- [`README.md`](../docs/reference/src.md)

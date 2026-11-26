@@ -45,6 +45,7 @@ class FigureSpec:
     label: str
     filename: str
     caption: str
+    alt_text: str
     generated_by: str
 
 
@@ -53,18 +54,21 @@ FIGURE_SPECS: tuple[FigureSpec, ...] = (
         label="fig:papers_per_source",
         filename="papers_per_source.png",
         caption="Per-source paper counts before cross-backend deduplication.",
+        alt_text="Bars compare the counts contributed by each search backend before deduplication.",
         generated_by="src.figures.plot_papers_per_source",
     ),
     FigureSpec(
         label="fig:year_histogram",
         filename="year_histogram.png",
         caption="Publication-year distribution for the deduplicated paper roster.",
+        alt_text="A histogram shows the publication years of the deduplicated papers.",
         generated_by="src.figures.plot_year_histogram",
     ),
     FigureSpec(
         label="fig:score_distribution",
         filename="score_distribution.png",
         caption="Backend-reported relevance scores ranked by paper.",
+        alt_text="Horizontal bars rank the papers by their backend-reported relevance scores.",
         generated_by="src.figures.plot_score_distribution",
     ),
 )

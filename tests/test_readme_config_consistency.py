@@ -1,5 +1,5 @@
-"""Regression test: every default documented in the project README must
-match the value the loader actually returns from ``manuscript/config.yaml``.
+"""Regression test: every default documented in the project configuration reference must
+match the value the loader actually returns from ``docs/manuscript/config.yaml``.
 
 This test is the safety net for the failure mode that triggered the
 audit which produced this file: the README was left behind when the
@@ -29,11 +29,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 def _load_config():
     from src.config import load_project_config
 
-    return load_project_config(PROJECT_ROOT / "manuscript" / "config.yaml")
+    return load_project_config(PROJECT_ROOT / "docs" / "manuscript" / "config.yaml")
 
 
 def _readme_text() -> str:
-    return (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+    return (PROJECT_ROOT / "docs" / "configuration.md").read_text(encoding="utf-8")
 
 
 # Each tuple: (markdown row pattern that must appear, expected truthy assertion).
@@ -82,9 +82,9 @@ def _readme_text() -> str:
         ("deep_search", "llm_model", "deep_search.llm_model", "`gemma3:4b`"),
         ("deep_search", "output_dir", "deep_search.output_dir", "`output/deep_search`"),
         ("deep_search", "write_unified_bibtex", "deep_search.write_unified_bibtex", "`true`"),
-        ("deep_search", "unified_bibtex_path", "deep_search.unified_bibtex_path", "`manuscript/references_deep.bib`"),
+        ("deep_search", "unified_bibtex_path", "deep_search.unified_bibtex_path", "`docs/manuscript/references_deep.bib`"),
         # top-level
-        ("top", "references_path", "references_path", "`manuscript/references.bib`"),
+        ("top", "references_path", "references_path", "`docs/manuscript/references.bib`"),
     ],
 )
 def test_readme_documented_default_matches_loader(section: str, key: str, attr_path: str, expected_repr: str) -> None:
@@ -122,7 +122,7 @@ def test_readme_documented_default_matches_loader(section: str, key: str, attr_p
         re.MULTILINE,
     )
     assert pattern.search(readme), (
-        f"README.md is missing a config-table row for `{key}` with default "
+        f"docs/configuration.md is missing a config-table row for `{key}` with default "
         f"{expected_repr}. Add a row of the form:\n"
         f"  | `{key}` | {expected_repr} | <description> |\n"
     )
@@ -139,8 +139,8 @@ def test_readme_does_not_advertise_obsolete_defaults() -> None:
     ]
     for needle in obsolete_strings:
         assert needle not in readme, (
-            f"README.md still contains the obsolete default {needle!r}; "
-            f"update the config table to match `manuscript/config.yaml`."
+            f"docs/configuration.md still contains the obsolete default {needle!r}; "
+            f"update the config table to match `docs/manuscript/config.yaml`."
         )
     # `llm.enabled` is `false` by default — guard against the stale
     # `enabled | true` claim returning under the `llm:` heading. We
@@ -155,6 +155,6 @@ def test_readme_does_not_advertise_obsolete_defaults() -> None:
     if llm_bodies:
         llm_body = llm_bodies[0]
         assert "| `enabled` | `true` |" not in llm_body, (
-            "README.md still claims `llm.enabled` defaults to `true`; the "
+            "docs/configuration.md still claims `llm.enabled` defaults to `true`; the "
             "bundled config has `enabled: false` for CI safety."
         )

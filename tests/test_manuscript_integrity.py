@@ -48,13 +48,13 @@ FORBIDDEN_PLACEHOLDERS = (
 
 
 def _read_manuscript(name: str) -> str:
-    return (PROJECT_ROOT / "manuscript" / name).read_text(encoding="utf-8")
+    return (PROJECT_ROOT / "docs" / "manuscript" / name).read_text(encoding="utf-8")
 
 
 def _all_manuscript_text() -> str:
     """Concatenate every renderable markdown source for cross-ref scanning."""
     chunks: list[str] = []
-    for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
+    for md in sorted((PROJECT_ROOT / "docs" / "manuscript").glob("*.md")):
         if md.name in NON_RENDERED:
             continue
         chunks.append(md.read_text(encoding="utf-8"))
@@ -92,7 +92,7 @@ def test_no_placeholder_strings_in_renderable_manuscript() -> None:
     and `07_deep_search.md` describe what is *not* written into the
     archive). Anywhere else, their presence is a regression."""
     allowed_files = {"05_pipeline_internals.md", "07_deep_search.md"}
-    for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
+    for md in sorted((PROJECT_ROOT / "docs" / "manuscript").glob("*.md")):
         if md.name in NON_RENDERED or md.name in allowed_files:
             continue
         text = md.read_text(encoding="utf-8")
@@ -108,14 +108,14 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
     never emit any of the historic placeholder strings into per-paper
     notes, papers.json, aggregate.json, or the composed S01."""
     iso = tmp_path / "iso"
-    (iso / "manuscript").mkdir(parents=True)
+    (iso / "docs" / "manuscript").mkdir(parents=True)
     (iso / "data").mkdir()
 
     # Reuse the bundled corpus so the search returns real papers.
     bundled_corpus = PROJECT_ROOT / "data" / "corpus.json"
     (iso / "data" / "corpus.json").write_text(bundled_corpus.read_text(encoding="utf-8"), encoding="utf-8")
 
-    (iso / "manuscript" / "config.yaml").write_text(
+    (iso / "docs" / "manuscript" / "config.yaml").write_text(
         "paper:\n  title: 'X'\n"
         "search:\n  query: 'reproducible'\n  sources: [local]\n"
         "  local_corpus: 'data/corpus.json'\n"
@@ -129,7 +129,7 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
         "  llm_per_paper: false\n"
         "  output_dir: 'output/deep_search'\n"
         "  search_cache_dir: 'output/cache/search'\n"
-        "  unified_bibtex_path: 'manuscript/references_deep.bib'\n",
+        "  unified_bibtex_path: 'docs/manuscript/references_deep.bib'\n",
         encoding="utf-8",
     )
 
@@ -139,7 +139,7 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "run_deep_search.py"),
             "--config",
-            str(iso / "manuscript" / "config.yaml"),
+            str(iso / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(iso),
             "--enable",
@@ -159,7 +159,7 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
             sys.executable,
             str(PROJECT_ROOT / "scripts" / "s_compose_literature_review.py"),
             "--config",
-            str(iso / "manuscript" / "config.yaml"),
+            str(iso / "docs" / "manuscript" / "config.yaml"),
             "--project-root",
             str(iso),
         ],
@@ -171,7 +171,7 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
 
     # Step 3: scan every produced artefact for forbidden strings.
     scan_targets: list[Path] = []
-    scan_targets.append(iso / "manuscript" / "S01_literature_review.md")
+    scan_targets.append(iso / "docs" / "manuscript" / "S01_literature_review.md")
     for p in (iso / "output" / "deep_search").rglob("*.md"):
         scan_targets.append(p)
     for p in (iso / "output" / "deep_search").rglob("*.json"):
@@ -189,7 +189,7 @@ def test_no_placeholder_strings_in_deep_search_outputs(tmp_path: Path) -> None:
 
     # Sanity check: the composer's "no LLM contributions" message is
     # acceptable explanatory prose, NOT a fake LLM output.
-    s01_text = (iso / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
+    s01_text = (iso / "docs" / "manuscript" / "S01_literature_review.md").read_text(encoding="utf-8")
     assert "Per-paper synthesis omitted" in s01_text
     assert "alice2020convexity" not in s01_text  # sanity: real keys, not test fixture
 
@@ -202,7 +202,7 @@ def test_every_inserted_figure_has_prose_crossref() -> None:
     anchor but no surrounding prose discusses it — Pandoc-crossref will
     happily emit "Figure 4." with no explanation in the rendered PDF.
     """
-    for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
+    for md in sorted((PROJECT_ROOT / "docs" / "manuscript").glob("*.md")):
         if md.name in NON_RENDERED:
             continue
         text = md.read_text(encoding="utf-8")
@@ -231,7 +231,7 @@ def test_every_disk_figure_is_inserted_in_manuscript() -> None:
 
         _pytest.skip("no PNGs in output/figures/")
     inserted: set[str] = set()
-    for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
+    for md in sorted((PROJECT_ROOT / "docs" / "manuscript").glob("*.md")):
         if md.name in NON_RENDERED:
             continue
         # Image regex tolerates `]` inside backtick spans (e.g.
@@ -255,7 +255,7 @@ def test_every_figure_caption_is_substantive() -> None:
     failure mode where a figure ships with a one-word "Figure." caption.
     """
     short_captions: list[tuple[str, str]] = []
-    for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
+    for md in sorted((PROJECT_ROOT / "docs" / "manuscript").glob("*.md")):
         if md.name in NON_RENDERED:
             continue
         text = re.sub(r"`[^`\n]*`", "<CODE>", md.read_text(encoding="utf-8"))
@@ -301,7 +301,7 @@ def _project_documentation_files() -> list[Path]:
     hard-coded numerical references. Excludes SYNTAX.md (documents the
     convention by example), output/, .venv/, .pytest_cache/."""
     candidates: list[Path] = []
-    for md in sorted((PROJECT_ROOT / "manuscript").glob("*.md")):
+    for md in sorted((PROJECT_ROOT / "docs" / "manuscript").glob("*.md")):
         if md.name in NON_RENDERED:
             continue
         candidates.append(md)
@@ -309,7 +309,7 @@ def _project_documentation_files() -> list[Path]:
     candidates.append(PROJECT_ROOT / "AGENTS.md")
     candidates.append(PROJECT_ROOT / "scripts" / "README.md")
     candidates.append(PROJECT_ROOT / "scripts" / "AGENTS.md")
-    candidates.append(PROJECT_ROOT / "manuscript" / "AGENTS.md")
+    candidates.append(PROJECT_ROOT / "docs" / "manuscript" / "AGENTS.md")
     candidates.append(PROJECT_ROOT / "src" / "README.md")
     candidates.append(PROJECT_ROOT / "src" / "AGENTS.md")
     candidates.append(PROJECT_ROOT / "tests" / "README.md")
