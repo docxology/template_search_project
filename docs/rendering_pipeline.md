@@ -146,6 +146,31 @@ uv run --no-sync python scripts/pipeline/stage_04_validate.py --project working/
 - `output/slides/` — per-section Beamer PDFs
 - `output/web/` — HTML versions
 
+### Refresh the current HTML reader
+
+Use the offline quickstart and the pinned render and validation above. The
+standard query supplies `references.bib`. The retained supplemental review
+comes from `S01_literature_review.md` and `references_deep.bib`, so the combined
+reader needs both files in the hydrated manuscript directory even with live
+deep search disabled. The HTML writer passes the two files to Pandoc
+citeproc. The PDF writer passes the same pair to BibTeX.
+
+To refresh the current reader, run the following from the source checkout.
+Set `search_project` to the detached checkout where Stage 04 passed.
+
+```sh
+cp "$search_project/output/web/index.html" "$search_project/output/web/favicon.ico" docs/reader/web/
+cp "$search_project/output/web/assets/source-web-fonts.js" docs/reader/web/assets/
+for image in papers_per_source year_histogram score_distribution; do
+  cp "$search_project/output/figures/$image.png" docs/reader/figures/
+done
+uv run --no-sync pytest tests/test_current_reader.py -q
+```
+
+The test verifies that each cited bibliography entry really exists and has
+rendered text. It also checks that the supplement's authored citation keys
+reach the current reader. The original `output/` snapshot stays in place.
+
 ### Phase 5 — Promote, Review, and Report
 
 **Optional artifact copy**, from the disposable Template checkout:
