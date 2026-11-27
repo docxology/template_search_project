@@ -58,6 +58,10 @@ Unlike `template_code_project` (whose `src/` is `infrastructure`-free), this pro
 
 **`src/pipeline.py` and `src/deep_search.py` are the only modules that touch `infrastructure.search.*`.** Every downstream module receives data through dataclass parameters or reads it from disk. This keeps the rest of the project testable without `pytest-httpserver` or a network connection.
 
+`src/dashboard.py` delegates dashboard assembly to
+`infrastructure.reporting.interactive_dashboard` through its
+`InteractiveDashboard`, `Invariant`, and `Panel` API.
+
 **`src/synthesis.py` does not depend on Ollama.** Its public functions (`synthesise_per_paper`, `synthesise_corpus`) accept a callable of shape `(str) -> str`. Tests pass a deterministic local function. Runtime callers build a real adapter via `src/llm_runtime.py::build_llm_callable`.
 
 ---
@@ -159,10 +163,10 @@ MPLBACKEND=Agg uv run --no-sync pytest tests/ \
 grep -rE "unittest\.mock|MagicMock|@patch|create_autospec" \
     tests/ || echo "Clean — no mocks found"
 
-# 3. src/ touches only the permitted infrastructure modules
-#    (search, reference.citation, llm — never .scientific / .reporting / .rendering)
-grep -rE "from infrastructure\.(scientific|reporting|rendering)" \
-    src/ || echo "Clean — src/ stays in its lane"
+# 3. Flag scientific, reporting, or rendering imports beyond the dashboard adapter.
+grep -rHE 'from infrastructure\.(scientific|reporting|rendering)' src/ \
+    | grep -vFx 'src/dashboard.py:from infrastructure.reporting.interactive_dashboard import (' \
+    || echo "Clean — only the declared dashboard reporting import"
 
 # 4. The configurable review CLI is wired
 uv run --no-sync python scripts/review --list

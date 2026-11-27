@@ -156,7 +156,7 @@ deep search disabled. The HTML writer passes the two files to Pandoc
 citeproc. The PDF writer passes the same pair to BibTeX.
 
 To refresh the current reader, run the following from the source checkout.
-Set `search_project` to the detached checkout where Stage 04 passed.
+Set `search_project` to the detached checkout where output validation passed.
 
 ```sh
 cp "$search_project/output/web/index.html" "$search_project/output/web/favicon.ico" docs/reader/web/
