@@ -24,20 +24,7 @@ Thin orchestrators executed in **lexicographic order** by `scripts/pipeline/stag
 
 ## Review entrypoint
 
-[`review`](review) (executable Python file) reads [`../review_config.yaml`](../review_config.yaml). Stages that pass `--repo-root` use `.` with `cwd` = project root (`projects/templates/template_search_project`).
-
-From repository root:
-
-```bash
-uv run python projects/templates/template_search_project/scripts/review \
-  --project-root "$(pwd)/projects/templates/template_search_project"
-```
-
-From project directory:
-
-```bash
-cd projects/templates/template_search_project && uv run python scripts/review
-```
+[`review`](review) reads [`../review_config.yaml`](../review_config.yaml). From the registered checkout prepared by the [offline quick start](../docs/quickstart.md), use `uv run --no-sync python scripts/review --list` to inspect the configured stages.
 
 ## Environment
 

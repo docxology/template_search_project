@@ -119,9 +119,7 @@ See [`src/deep_search.py`](src/deep_search.py) and
 
 ## Testing
 
-```bash
-uv run pytest projects/templates/template_search_project/tests/ -v
-```
+Use the [offline quick start](docs/quickstart.md) to register this checkout and run its tests.
 
 All tests run offline: `LocalBackend` against real temp files,
 deterministic LLM callable, real subprocess where needed. The committed
@@ -164,18 +162,9 @@ To use only a curated corpus (offline reproducibility):
 
 Configurable gate via [`scripts/review`](scripts/review) and [`review_config.yaml`](review_config.yaml). The project-analysis stage runs [`scripts/zz_generate_review_report.py`](scripts/zz_generate_review_report.py) last; if `output/review/summary.json` is absent it invokes `scripts/review` subprocess before writing `output/review/REVIEW_REPORT.md`.
 
-List stages:
-
-```bash
-cd projects/templates/template_search_project && uv run python scripts/review --list
-```
-
-Run all enabled stages (from repo root):
-
-```bash
-uv run python projects/templates/template_search_project/scripts/review \
-  --project-root "$(pwd)/projects/templates/template_search_project"
-```
+From the registered checkout prepared by the [offline quick start](docs/quickstart.md),
+use `uv run --no-sync python scripts/review --list` to inspect the available stages.
+The quick start describes the bundled offline evidence and manuscript workflow.
 
 ### Available stages
 

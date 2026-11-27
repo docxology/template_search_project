@@ -49,30 +49,12 @@ This sequence is intentional. Each document provides context the next assumes:
 
 ## Verification Commands
 
-Run all four before submitting any change:
-
-```bash
-# 1. Tests pass and coverage gate is met
-uv run pytest projects/templates/template_search_project/tests/ \
-    --cov=projects/templates/template_search_project/src \
-    --cov-fail-under=90 -q
-
-# 2. No mocks anywhere in tests/
-grep -rE "unittest\.mock|MagicMock|@patch|create_autospec" \
-    projects/templates/template_search_project/tests/ || echo "Clean"
-
-# 3. src/ stays in its lane (no rendering/reporting/scientific imports)
-grep -rE "from infrastructure\.(rendering|reporting|scientific)" \
-    projects/templates/template_search_project/src/ || echo "Clean"
-
-# 4. The configurable review CLI lists the nine stages
-cd projects/templates/template_search_project && uv run python scripts/review --list
-```
+Follow the [offline quick start](quickstart.md) from the registered checkout for the native coverage gate. Check that tests avoid mocks and that `src/` avoids shared rendering, reporting, and scientific imports. Use `uv run --no-sync python scripts/review --list` to inspect the review stages from that checkout.
 
 ## Contracts
 
 - Prefer linking to [`../manuscript/config.yaml`](manuscript/config.yaml) as the single configuration reference.
-- Paths in docs assume execution from the repository root (`template/`) unless stated otherwise.
+- Project-local commands run from the registered checkout. The quick start identifies commands that run from the separate Template checkout.
 - Cross-references inside this directory use relative links.
 
 ## Cross-References
