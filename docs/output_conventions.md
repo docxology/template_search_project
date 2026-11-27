@@ -8,7 +8,7 @@ truth for that mapping.
 
 ```mermaid
 flowchart TB
-    P["projects/templates/template_search_project/"]
+    P["Standalone project root"]
     P --> DAT["data/<br/>committed"]
     P --> MAN["docs/manuscript/"]
     P --> OUT["output/<br/>generated · published snapshot tracked"]

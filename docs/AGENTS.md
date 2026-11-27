@@ -53,7 +53,7 @@ Follow the [offline quick start](quickstart.md) from the registered checkout for
 
 ## Contracts
 
-- Prefer linking to [`../manuscript/config.yaml`](manuscript/config.yaml) as the single configuration reference.
+- Prefer linking to [`manuscript/config.yaml`](manuscript/config.yaml) as the single configuration reference.
 - Project-local commands run from the registered checkout. The quick start identifies commands that run from the separate Template checkout.
 - Cross-references inside this directory use relative links.
 
@@ -63,7 +63,7 @@ Follow the [offline quick start](quickstart.md) from the registered checkout for
 - [`../AGENTS.md`](../AGENTS.md) — project-level overview.
 - [`../pyproject.toml`](../pyproject.toml) — coverage-gate settings (`fail_under = 90`, `branch = true`).
 - [`../tests/conftest.py`](../tests/conftest.py) — `sys.path` setup and `MPLBACKEND=Agg`.
-- [`../manuscript/AGENTS.md`](manuscript/AGENTS.md) — manuscript-directory protocol.
-- [`../manuscript/SYNTAX.md`](manuscript/SYNTAX.md) — project-local Pandoc syntax overlay.
+- [`manuscript/AGENTS.md`](manuscript/AGENTS.md) — manuscript-directory protocol.
+- [`manuscript/SYNTAX.md`](manuscript/SYNTAX.md) — project-local Pandoc syntax overlay.
 - [`../src/AGENTS.md`](../src/AGENTS.md) — `src/` module-level guide.
-- [`../../../AGENTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/AGENTS.md) — root template documentation.
+- [Template agent guide](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/AGENTS.md) — root template documentation.

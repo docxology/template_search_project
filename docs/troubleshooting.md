@@ -28,8 +28,7 @@ flowchart TB
 
 ## "Pipeline failed in Project Analysis stage"
 
-**Symptom:** `./run.sh --project templates/template_search_project --pipeline` exits
-on stage 4.
+The project analysis command fails when run from the registered project checkout. Start with the [offline quickstart](quickstart.md) for the supported local command.
 
 **Causes / fixes:**
 
@@ -127,8 +126,7 @@ after a `--no-cache` run.
 
 ## "Coverage gate failure"
 
-**Symptom:** `pytest projects/templates/template_search_project/tests/` exits with
-"coverage below 90".
+The [standalone coverage check](quickstart.md#analyze-the-local-corpus-and-prepare-the-manuscript) reports coverage below 90%.
 
 **Causes / fixes:**
 
@@ -142,8 +140,7 @@ after a `--no-cache` run.
 ```
 _pytest.pathlib.ImportPathMismatchError: ('tests.conftest', ...)
 ```
-when running `pytest tests/ projects/templates/template_search_project/tests/`
-together.
+when running the standalone and Template test suites in the same pytest invocation.
 
 **Cause:** Both directories are named `tests/` and pytest's import path
 discovery confuses them.

@@ -30,11 +30,11 @@ For navigation, [`README.md`](README.md) lists every doc by audience.
 
 Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/_generated/COUNTS.md); the suite runs well above the 90% gate (set by the project `pyproject.toml` and re-enforced at the root pipeline).
 
-Before modifying any file in `src/`, count the tests that exercise it. After modifying, run:
+Before modifying any file in `src/`, count the tests that exercise it. After modifying, run the coverage check from the registered project checkout described in the [offline quickstart](quickstart.md).
 
 ```bash
-uv run pytest projects/templates/template_search_project/tests/ \
-    --cov=projects/templates/template_search_project/src \
+MPLBACKEND=Agg uv run --no-sync pytest tests/ \
+    --cov=src \
     --cov-fail-under=90 \
     --cov-report=term-missing \
     -q
@@ -77,7 +77,7 @@ Our pipeline uses standard literature-search APIs and produces a citation list.
 `infrastructure.search.literature.LiteratureClient.search` against the backends
 listed in `project_config.search.sources`, then writes BibTeX entries via
 `infrastructure.reference.citation.paper_to_bibentry` to
-`projects/templates/template_search_project/docs/manuscript/references.bib`.
+`docs/manuscript/references.bib`.
 ```
 
 **BAD**:
@@ -113,7 +113,7 @@ search:
 llm:
   enabled: false        # no Ollama dependency
 deep_search:
-  enabled: true          # runs by default; sources: [arxiv, crossref] (live network, no key required)
+  enabled: false         # uses the retained supplemental review
 ```
 
 Tests assume these defaults. When changing them, also update `tests/test_readme_config_consistency.py`.
@@ -131,7 +131,7 @@ Do not apply code-style rules to manuscript prose, and do not apply manuscript s
 
 ## Rule 7: Keep generated output separate from source
 
-The entire `projects/templates/template_search_project/output/` tree (and the auto-populated files `docs/manuscript/references.bib`, `docs/manuscript/references_deep.bib`, `docs/manuscript/S01_literature_review.md`) is rewritten on every run. Editing those files has zero lasting effect.
+The entire `output/` tree (and the auto-populated files `docs/manuscript/references.bib`, `docs/manuscript/references_deep.bib`, `docs/manuscript/S01_literature_review.md`) is rewritten on every run. Editing those files has zero lasting effect.
 
 If you need to change what a generated file contains, change the **generator**:
 
@@ -147,25 +147,25 @@ See [`output_conventions.md`](output_conventions.md) for the complete producer /
 
 ## Verification Checklist
 
-Run all four commands before submitting any change to this project:
+Run these checks from the registered project checkout described in the [offline quickstart](quickstart.md).
 
 ```bash
 # 1. Tests pass and coverage gate is met
-uv run pytest projects/templates/template_search_project/tests/ \
-    --cov=projects/templates/template_search_project/src \
+MPLBACKEND=Agg uv run --no-sync pytest tests/ \
+    --cov=src \
     --cov-fail-under=90 -q
 
 # 2. No mocks anywhere in tests/
 grep -rE "unittest\.mock|MagicMock|@patch|create_autospec" \
-    projects/templates/template_search_project/tests/ || echo "Clean — no mocks found"
+    tests/ || echo "Clean — no mocks found"
 
 # 3. src/ touches only the permitted infrastructure modules
 #    (search, reference.citation, llm — never .scientific / .reporting / .rendering)
 grep -rE "from infrastructure\.(scientific|reporting|rendering)" \
-    projects/templates/template_search_project/src/ || echo "Clean — src/ stays in its lane"
+    src/ || echo "Clean — src/ stays in its lane"
 
 # 4. The configurable review CLI is wired
-cd projects/templates/template_search_project && uv run python scripts/review --list
+uv run --no-sync python scripts/review --list
 ```
 
 Checks 2 and 3 must produce the "Clean" message. Check 4 must list the nine review stages without raising.

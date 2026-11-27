@@ -48,8 +48,8 @@ Tests pass a deterministic local function. Runtime callers pass the adapter buil
 | `tests/test_search_invariants_and_dashboard.py` | `src/search_invariants.py` + dashboard payloads |
 | `tests/test_readme_config_consistency.py` | Project README claims match live `docs/manuscript/config.yaml` |
 
-Configuration: `projects/templates/template_search_project/pyproject.toml` (`fail_under = 90`).
-Conftest: `projects/templates/template_search_project/tests/conftest.py` (sets `MPLBACKEND=Agg`, adds `src/` to `sys.path`).
+Configuration: `pyproject.toml` (`fail_under = 90`).
+Conftest: `tests/conftest.py` (sets `MPLBACKEND=Agg`, adds `src/` to `sys.path`).
 
 Live test count and coverage are tracked in [`docs/_generated/COUNTS.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/_generated/COUNTS.md); the suite runs well above the 90% gate.
 
@@ -87,11 +87,11 @@ exclude_lines = [
 ]
 ```
 
-Run with full coverage report:
+Run the coverage check from the registered project checkout described in the [offline quickstart](quickstart.md).
 
 ```bash
-uv run pytest projects/templates/template_search_project/tests/ \
-    --cov=projects/templates/template_search_project/src \
+MPLBACKEND=Agg uv run --no-sync pytest tests/ \
+    --cov=src \
     --cov-report=term-missing \
     --cov-fail-under=90
 ```
