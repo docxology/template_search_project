@@ -106,21 +106,13 @@ No code changes required. `tests/test_readme_config_consistency.py` ensures the 
 
 ### Where does the rendered PDF live?
 
-Working copy:
-```
-projects/templates/template_search_project/output/pdf/template_search_project_combined.pdf
-```
-
-Promoted copy (used by CI artifact upload and the multi-project executive report):
-```
-output/templates/template_search_project/template_search_project_combined.pdf
-```
+Open `output/pdf/template_search_project_combined.pdf` inside the registered project checkout. The optional promotion step copies the PDF to `output/working/template_search_project/template_search_project_combined.pdf` inside Template. See the [rendering guide](rendering_pipeline.md) for both steps.
 
 ## Common Pitfalls
 
 ### The composer ran after the resolver — why are deep citations failing?
 
-Because `output/manuscript/references_deep.bib` is the copy the renderer reads, and it was copied **before** the composer regenerated `S01_literature_review.md`. Run them in alphabetical order (`./run.sh --pipeline` does this automatically) or manually re-run `z_generate_manuscript_variables.py` after the composer.
+Because `output/manuscript/references_deep.bib` is the copy the renderer reads, and it was copied **before** the composer regenerated `S01_literature_review.md`. Follow the [rendering guide](rendering_pipeline.md) to run the composer before `scripts/z_generate_manuscript_variables.py` in the registered project checkout.
 
 ### My LLM call timed out
 
@@ -138,4 +130,4 @@ The BibTeX writer is a deterministic function of `(corpus, citation-key generato
 - [`troubleshooting.md`](troubleshooting.md) — symptom-driven recipes.
 - [`syntax_guide.md`](syntax_guide.md) — Pandoc-crossref labels and the `{{TOKEN}}` registry.
 - [`testing_philosophy.md`](testing_philosophy.md) — zero-mock and LLM-as-callable patterns.
-- [`../manuscript/SYNTAX.md`](manuscript/SYNTAX.md) — manuscript-side syntax conventions.
+- [`manuscript/SYNTAX.md`](manuscript/SYNTAX.md) — manuscript-side syntax conventions.

@@ -16,7 +16,7 @@ Subfolder documentation: [`docs/AGENTS.md`](docs/AGENTS.md), [`docs/manuscript/A
 
 ```mermaid
 flowchart TB
-    ROOT[/projects/templates/template_search_project/]
+    ROOT[/Standalone project root/]
     ROOT --> SRC_DIR[/src<br/>domain logic/]
     ROOT --> TESTS_DIR[/tests<br/>real-data tests/]
     ROOT --> SCR_DIR[/scripts<br/>thin orchestrators/]

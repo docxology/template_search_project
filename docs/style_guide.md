@@ -6,7 +6,7 @@ This document defines the coding and communication style for the `search_project
 
 ## 1. Zero-Mock Policy (and the LLM-as-Callable Corollary)
 
-The most critical style rule is the absolute prohibition of mocking. The following are **forbidden** anywhere inside `projects/templates/template_search_project/tests/`:
+The most critical style rule is the absolute prohibition of mocking. The following are **forbidden** anywhere inside `tests/`:
 
 - `import unittest.mock`
 - `from unittest.mock import MagicMock, patch, create_autospec, Mock, AsyncMock`
@@ -37,9 +37,10 @@ assert result.kind == "per_paper"
 assert "CONTRIBUTION:" in result.text
 ```
 
-**Verify cleanliness**:
+Check for mock usage from the registered project checkout described in the [offline quickstart](quickstart.md).
+
 ```bash
-grep -rE "unittest\.mock|MagicMock|@patch" projects/templates/template_search_project/tests/ || echo "Clean"
+grep -rE "unittest\.mock|MagicMock|@patch" tests/ || echo "Clean"
 ```
 
 ---
@@ -70,7 +71,7 @@ Project code delegates cross-cutting concerns to `infrastructure/`. Unlike `temp
 ```bash
 # src/ never imports from rendering / reporting / scientific
 grep -rE "from infrastructure\.(rendering|reporting|scientific)" \
-    projects/templates/template_search_project/src/ || echo "Clean"
+    src/ || echo "Clean"
 ```
 
 ---
@@ -151,23 +152,23 @@ When AI agents or humans refer to files in logs, documentation, comments, or imp
 
 | Short Name | Absolute Path (from repo root) |
 |---|---|
-| project config | `projects/templates/template_search_project/docs/manuscript/config.yaml` |
-| typed config | `projects/templates/template_search_project/src/config.py` |
-| standard pipeline | `projects/templates/template_search_project/src/pipeline.py` |
-| deep search | `projects/templates/template_search_project/src/deep_search.py` |
-| synthesis | `projects/templates/template_search_project/src/synthesis.py` |
-| LLM runtime | `projects/templates/template_search_project/src/llm_runtime.py` |
-| variables | `projects/templates/template_search_project/src/manuscript_variables.py` |
-| review helpers | `projects/templates/template_search_project/src/analysis.py` |
-| offline corpus | `projects/templates/template_search_project/data/corpus.json` |
-| run script | `projects/templates/template_search_project/scripts/run_search_pipeline.py` |
-| deep run script | `projects/templates/template_search_project/scripts/run_deep_search.py` |
-| composer | `projects/templates/template_search_project/scripts/s_compose_literature_review.py` |
-| review CLI | `projects/templates/template_search_project/scripts/review` |
-| standard BibTeX | `projects/templates/template_search_project/docs/manuscript/references.bib` |
-| deep BibTeX | `projects/templates/template_search_project/docs/manuscript/references_deep.bib` |
-| working PDF | `projects/templates/template_search_project/output/pdf/template_search_project_combined.pdf` |
-| promoted PDF | `output/templates/template_search_project/template_search_project_combined.pdf` |
+| project config | `docs/manuscript/config.yaml` |
+| typed config | `src/config.py` |
+| standard pipeline | `src/pipeline.py` |
+| deep search | `src/deep_search.py` |
+| synthesis | `src/synthesis.py` |
+| LLM runtime | `src/llm_runtime.py` |
+| variables | `src/manuscript_variables.py` |
+| review helpers | `src/analysis.py` |
+| offline corpus | `data/corpus.json` |
+| run script | `scripts/run_search_pipeline.py` |
+| deep run script | `scripts/run_deep_search.py` |
+| composer | `scripts/s_compose_literature_review.py` |
+| review CLI | `scripts/review` |
+| standard BibTeX | `docs/manuscript/references.bib` |
+| deep BibTeX | `docs/manuscript/references_deep.bib` |
+| working PDF | `output/pdf/template_search_project_combined.pdf` |
+| promoted PDF | `output/working/template_search_project/template_search_project_combined.pdf` in the Template checkout |
 
 ---
 

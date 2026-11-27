@@ -2,7 +2,7 @@
 
 This document defines the syntax conventions for documentation and manuscript content inside the `search_project` exemplar. Sections 1–5 are mandatory constraints; sections 6–8 are reference material for common operations.
 
-The canonical, repo-wide manuscript-semantics reference is [`docs/guides/manuscript-semantics.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/guides/manuscript-semantics.md). The project-local overlay is [`../manuscript/SYNTAX.md`](manuscript/SYNTAX.md). This file ties them to agent-facing rules.
+The canonical, repo-wide manuscript-semantics reference is [`docs/guides/manuscript-semantics.md`](https://github.com/docxology/template/blob/87704feae0a4490ef7dad9c931d268e8c30273c2/docs/guides/manuscript-semantics.md). The project-local overlay is [`manuscript/SYNTAX.md`](manuscript/SYNTAX.md). This file ties them to agent-facing rules.
 
 ---
 
@@ -103,11 +103,11 @@ The "not run" sentinel is intentional: a missing aggregate produces a discoverab
 1. Add a field to `ManuscriptVariables` in `src/manuscript_variables.py`.
 2. Populate it inside `compute_variables`.
 3. Reference it in a manuscript `.md` file as `{{NEW_TOKEN}}` (the substitution lower-cases internally then uppercases the marker key, so the field name `new_token` becomes `{{NEW_TOKEN}}`).
-4. Run `scripts/z_generate_manuscript_variables.py` and verify the JSON contains the key:
+4. From the registered project checkout, regenerate the variables and check that the JSON contains the key.
    ```bash
-   uv run python projects/templates/template_search_project/scripts/z_generate_manuscript_variables.py
+   uv run --no-sync python scripts/z_generate_manuscript_variables.py
    python -c "import json,sys; d=json.load(open(sys.argv[1])); print(d['new_token'])" \
-       projects/templates/template_search_project/output/data/manuscript_variables.json
+       output/data/manuscript_variables.json
    ```
 
 ### Detecting Unresolved Tokens
@@ -115,7 +115,7 @@ The "not run" sentinel is intentional: a missing aggregate produces a discoverab
 If a token remains unresolved, the literal `{{TOKEN_NAME}}` will appear in the rendered PDF. Detect before rendering:
 
 ```bash
-grep -rn "{{[A-Z_]*}}" projects/templates/template_search_project/output/manuscript/ \
+grep -rn "{{[A-Z_]*}}" output/manuscript/ \
   && echo "UNRESOLVED TOKENS FOUND" || echo "All tokens resolved"
 ```
 
@@ -132,9 +132,10 @@ def example() -> bool:
     return True
 ```
 
-For shell commands:
+For a shell command from the registered project checkout, use a Bash fence.
+
 ```bash
-uv run pytest projects/templates/template_search_project/tests/ -q
+MPLBACKEND=Agg uv run --no-sync pytest tests/ -q
 ```
 
 For YAML snippets:
@@ -143,7 +144,7 @@ search:
   sources: [local]
 ```
 
-For inline code referencing file paths, use single backticks: `projects/templates/template_search_project/src/pipeline.py`.
+For inline code referencing file paths, use single backticks: `src/pipeline.py`.
 
 ---
 
@@ -175,7 +176,7 @@ To add a figure that appears in `03_results.md`:
    ![Caption text describing the figure.](../../output/figures/new_figure.png){#fig:new_label}
    ```
 4. Reference in prose using Pandoc-crossref: `See [@fig:new_label].`
-5. Update [`../manuscript/SYNTAX.md`](manuscript/SYNTAX.md) (figure label registry) and the matching table in this guide.
+5. Update [`manuscript/SYNTAX.md`](manuscript/SYNTAX.md) (figure label registry) and the matching table in this guide.
 6. Re-run the full pipeline to verify the figure appears in the PDF.
 
 ---
@@ -207,11 +208,12 @@ Unlike `template_code_project` (single hand-curated `references.bib`), this proj
 
 **Consequence**: do not hand-edit either `.bib` file. Both are regenerated. Add curated entries by editing `data/corpus.json` (for the standard pipeline) or by extending `project_config.deep_search.keywords` (for the deep pipeline).
 
-Validate keys before render:
+Validate citation keys from the pinned Template checkout after registering the [working project](quickstart.md).
 
 ```bash
-uv run python -m infrastructure.reference.citation.cli validate \
-    projects/templates/template_search_project/docs/manuscript/references.bib --strict
-uv run python -m infrastructure.reference.citation.cli validate \
-    projects/templates/template_search_project/docs/manuscript/references_deep.bib --strict
+project_dir=projects/working/template_search_project
+uv run --no-sync python -m infrastructure.reference.citation.cli validate \
+    "$project_dir/docs/manuscript/references.bib" --strict
+uv run --no-sync python -m infrastructure.reference.citation.cli validate \
+    "$project_dir/docs/manuscript/references_deep.bib" --strict
 ```
